@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
   const { code } = req.query;
 
-  // Determine the site URL from the request itself (works with any custom domain)
+  // Determine the site URL from the request itself
   const host = req.headers['x-forwarded-host'] || req.headers.host;
   const siteUrl = `https://${host}`;
 
@@ -38,22 +38,29 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: data.error_description || data.error });
     }
 
-    // Return HTML that sends the token to the Decap CMS opener window and closes
+    // Return HTML with postMessage to Decap CMS opener
+    const token = data.access_token;
+    const scope = data.scope || 'repo';
     res.setHeader('Content-Type', 'text/html');
-    const responseHtml = `<!DOCTYPE html>
+    return res.send(`<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"/></head>
+<head><meta charset="utf-8"/><title>Authorizing...</title></head>
 <body>
+<p>Authorization successful, redirecting...</p>
 <script>
-  window.opener.postMessage(
-    'authorization:${siteUrl}:${data.access_token}:${data.scope || 'repo'}',
-    '${siteUrl}'
-  );
-  window.close();
+  (function() {
+    var msg = 'authorization:${siteUrl}:${token}:${scope}';
+    try {
+      window.opener.postMessage(msg, '*');
+    } catch(e) {
+      // fallback: try location.origin
+      try { window.opener.postMessage(msg, location.origin); } catch(e2) {}
+    }
+    setTimeout(function() { window.close(); }, 500);
+  })();
 </script>
 </body>
-</html>`;
-    return res.status(200).send(responseHtml);
+</html>`);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
