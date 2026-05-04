@@ -2,6 +2,7 @@
   "name": "wandering-notes",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "python scripts/build-posts.py",
     "deploy": "python scripts/build-posts.py && vercel deploy --prod"
