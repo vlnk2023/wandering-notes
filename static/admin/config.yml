@@ -3,7 +3,7 @@
 
 backend:
   name: github
-  repo: your-username/wandering-notes    # ← 请替换为你的 GitHub 用户名/仓库名
+  repo: vlnk2023/wandering-notes
   branch: main
   base_url: https://api.github.com
 
