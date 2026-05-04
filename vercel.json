@@ -1,0 +1,11 @@
+{
+  "outputDirectory": "static",
+  "rewrites": [
+    { "source": "/posts", "destination": "/posts/index.html" },
+    { "source": "/post/(.*)", "destination": "/posts/$1.html" }
+  ],
+  "redirects": [
+    { "source": "/", "destination": "/posts", "permanent": true }
+  ],
+  "buildCommand": null
+}

@@ -1,0 +1,92 @@
+# 轻量笔记系统
+
+在情报站中发布 1-8 篇/天的笔记文章。
+
+## 架构
+
+全静态方案——构建时生成 HTML，Vercel CDN 直出，**零 Edge Function 开销**。
+
+```
+data/posts/*.md                →   脚本构建     →   static/posts/*.html
+(手写 Markdown + frontmatter)      build-posts.py   (CDN 直接服务)
+```
+
+## 写新文章
+
+在 `data/posts/` 下新建 `.md` 文件：
+
+```markdown
+---
+title: 文章标题
+date: 2026-05-05
+tags: [标签A, 标签B]
+summary: 可选摘要（默认取正文前 120 字）
+---
+
+正文 Markdown 内容...
+```
+
+- 文件名规范：`YYYY-MM-DD-英文短名.md`
+- slug 由文件名决定（不含 `.md`），URL 为 `/post/文件名`
+- 仅当 `draft: true` 时不发布
+- 支持标准 Markdown：标题、列表、代码块、表格、图片、引用
+
+## 构建与部署
+
+```bash
+# 构建生成静态文件
+python3 scripts/build-posts.py
+
+# 部署到生产
+vercel deploy --prod
+```
+
+构建过程：
+1. 扫描 `data/posts/*.md`，按日期降序排列
+2. 解析 YAML frontmatter + Mistune Markdown 渲染
+3. 生成 `static/posts/{slug}.html`（每篇独立完整 HTML 页）
+4. 生成 `static/posts/index.html`（列表页）
+5. 生成 `data/public/posts.json`（轻量索引，首页挂件使用）
+6. 注入首页 `static/home.html`：最新 3 篇卡片
+
+## 路由
+
+| 路径 | 目标 | 类型 |
+|------|------|------|
+| `/posts` | `static/posts/index.html` | 列表页，按时间倒序 |
+| `/post/{slug}` | `static/posts/{slug}.html` | 单篇详情页 |
+| 首页挂件 | 构建时注入 `<section class="notes-section">` | 最新 3 篇卡片 |
+
+均通过 `vercel.json` rewrite 实现，不经过 Edge Function。
+
+## 性能
+
+- 每篇 ~4-5KB（含模板 + 正文），CDN 边缘缓存
+- 请求延时：**<5ms**（静态文件，零冷启动）
+- 构建 8 篇文章：**<200ms**
+- Vercel 免费版容量允许约 **3,400 篇**
+
+## 文件结构
+
+```
+data/posts/                    ← 源文件（手写）
+├── 2026-05-04-hello.md
+└── 2026-05-03-intel-upgrade.md
+
+static/posts/                  ← 构建产物（vercel deploy 上传）
+├── index.html
+├── 2026-05-04-hello.html
+└── 2026-05-03-intel-upgrade.html
+
+data/public/posts.json         ← 轻量索引
+scripts/build-posts.py         ← 构建脚本
+```
+
+## 依赖
+
+- `python-frontmatter` — YAML frontmatter 解析
+- `mistune` — Markdown → HTML 渲染
+
+```bash
+pip install python-frontmatter mistune
+```

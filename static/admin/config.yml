@@ -1,0 +1,63 @@
+# Decap CMS Configuration
+# Docs: https://decapcms.org/docs/configure-decap-cms/
+
+backend:
+  name: github
+  repo: your-username/wandering-notes    # ← 请替换为你的 GitHub 用户名/仓库名
+  branch: main
+  base_url: https://api.github.com
+
+# 仅在 GitHub OAuth App 配置后才可登录编辑
+# 见 https://decapcms.org/docs/external-oauth-clients/
+# 也可以用 Git Gateway (Netlify 提供) 替代
+publish_mode: editorial_workflow
+
+media_folder: "static/images"
+public_folder: "/images"
+
+collections:
+  - name: "posts"
+    label: "笔记"
+    label_singular: "笔记"
+    folder: "data/posts"
+    create: true
+    delete: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "post/{{slug}}"
+    sort: "date:desc"
+    fields:
+      - label: "标题"
+        name: "title"
+        widget: "string"
+        required: true
+      - label: "发布日期"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        required: true
+      - label: "标签"
+        name: "tags"
+        widget: "list"
+        field:
+          label: "标签"
+          name: "tag"
+          widget: "string"
+        required: false
+        default: []
+      - label: "摘要"
+        name: "summary"
+        widget: "text"
+        required: false
+      - label: "是否为草稿"
+        name: "draft"
+        widget: "boolean"
+        required: false
+        default: false
+      - label: "正文"
+        name: "body"
+        widget: "markdown"
+        required: true

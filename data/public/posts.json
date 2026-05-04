@@ -1,0 +1,35 @@
+{
+  "posts": [
+    {
+      "slug": "如何添加修改新笔记",
+      "title": "如何添加修改新笔记",
+      "date": "2026-05-04",
+      "summary": "现在新建笔记只需：\ncd /mnt/d/vscode_files/test_202604/test/wandering-notes\npython scripts/new-post.py\npython scripts/new-post.py ",
+      "tags": [
+        "笔记",
+        "部署"
+      ]
+    },
+    {
+      "slug": "2026-05-04-hello",
+      "title": "你好，笔记功能",
+      "date": "2026-05-04",
+      "summary": "在情报站增加了轻量笔记功能，用于发布每日观察和短篇分析。",
+      "tags": [
+        "公告",
+        "技术"
+      ]
+    },
+    {
+      "slug": "2026-05-03-intel-upgrade",
+      "title": "情报系统升级：实时追踪关键事件",
+      "date": "2026-05-03",
+      "summary": "介绍一下最近情报系统的核心升级——多源事件聚合、语义分类和增量构建的实现思路。",
+      "tags": [
+        "情报",
+        "系统架构"
+      ]
+    }
+  ],
+  "count": 3
+}
