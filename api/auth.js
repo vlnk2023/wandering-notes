@@ -1,11 +1,11 @@
 // Vercel Serverless Function — Decap CMS GitHub OAuth proxy
-// Uses the request host dynamically so it works with custom domains.
+// Decap CMS 3.x expects: authorization:github:success:{"token":"...","scope":"..."}
+// with a handshake: authorizing:github
 
 export default async function handler(req, res) {
   const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
   const { code } = req.query;
 
-  // Determine the site URL from the request itself
   const host = req.headers['x-forwarded-host'] || req.headers.host;
   const siteUrl = `https://${host}`;
 
@@ -35,28 +35,51 @@ export default async function handler(req, res) {
     const data = await tokenRes.json();
 
     if (data.error) {
-      return res.status(400).json({ error: data.error_description || data.error });
+      res.setHeader('Content-Type', 'text/html');
+      return res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"/></head><body>
+<script>
+  window.opener.postMessage('authorization:github:error:${JSON.stringify({error: data.error_description || data.error})}', '${siteUrl}');
+  setTimeout(function() { window.close(); }, 500);
+</script>
+</body></html>`);
     }
 
-    // Return HTML with postMessage to Decap CMS opener
-    const token = data.access_token;
-    const scope = data.scope || 'repo';
+    // Phase 1: send handshake, wait for CMS to respond
+    // Phase 2: send actual authorization token
+    const authData = JSON.stringify({ token: data.access_token, scope: data.scope || 'repo' });
     res.setHeader('Content-Type', 'text/html');
     return res.send(`<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"/><title>Authorizing...</title></head>
 <body>
-<p>Authorization successful, redirecting...</p>
 <script>
   (function() {
-    var msg = 'authorization:${siteUrl}:${token}:${scope}';
-    try {
-      window.opener.postMessage(msg, '*');
-    } catch(e) {
-      // fallback: try location.origin
-      try { window.opener.postMessage(msg, location.origin); } catch(e2) {}
+    // Phase 1: handshake
+    window.opener.postMessage('authorizing:github', '${siteUrl}');
+
+    // Phase 2: send authorization token
+    function sendToken() {
+      window.opener.postMessage(
+        'authorization:github:success:${authData}',
+        '${siteUrl}'
+      );
     }
-    setTimeout(function() { window.close(); }, 500);
+
+    // Wait for handshake response from CMS, or just send after timeout
+    function onMessage(e) {
+      if (e.data === 'authorizing:github' && e.origin === '${siteUrl}') {
+        sendToken();
+        setTimeout(function() { window.close(); }, 1000);
+      }
+    }
+    window.addEventListener('message', onMessage, false);
+
+    // Fallback: if CMS doesn't respond within 3s, send token anyway
+    setTimeout(function() {
+      window.removeEventListener('message', onMessage);
+      sendToken();
+      setTimeout(function() { window.close(); }, 1000);
+    }, 3000);
   })();
 </script>
 </body>
