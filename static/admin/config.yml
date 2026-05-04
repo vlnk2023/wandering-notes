@@ -5,7 +5,7 @@ backend:
   name: github
   repo: vlnk2023/wandering-notes
   branch: main
-  base_url: https://wandering-notes.vercel.app
+  base_url: https://mnotes.phyu.de5.net
   auth_endpoint: api/auth
 
 # 仅在 GitHub OAuth App 配置后才可登录编辑
