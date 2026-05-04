@@ -1,6 +1,8 @@
 {
   "outputDirectory": "static",
   "rewrites": [
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/admin/", "destination": "/admin/index.html" },
     { "source": "/posts", "destination": "/posts/index.html" },
     { "source": "/post/(.*)", "destination": "/posts/$1.html" }
   ],
