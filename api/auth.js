@@ -45,17 +45,11 @@ export default async function handler(req, res) {
 <head><meta charset="utf-8"/></head>
 <body>
 <script>
-  (function() {
-    function receiveMessage(e) {
-      window.opener.postMessage(
-        'authorization:${siteUrl}:${data.access_token}:${data.scope || 'repo'}',
-        e.origin
-      );
-      window.close();
-    }
-    window.addEventListener('message', receiveMessage, false);
-    window.opener.postMessage('authorizing:${siteUrl}', '*');
-  })();
+  window.opener.postMessage(
+    'authorization:${siteUrl}:${data.access_token}:${data.scope || 'repo'}',
+    '${siteUrl}'
+  );
+  window.close();
 </script>
 </body>
 </html>`;
