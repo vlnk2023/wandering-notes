@@ -1,11 +1,12 @@
 ---
-title: 常用智能搜索引擎
+title: 常用智能搜索引擎搜集
 date: 2026-05-05
+updated: 2026-05-05
 tags:
-  - 技术笔记
+  - 资源
   - 搜索
-  - 技术
-summary: 如何利用这些引擎命令行接入bash脚本
+  - AI
+summary: 搜集常用智能搜索引擎（Perplexity、Grok、Brave Search 等）及命令行接入方案，为知识库构建提供基础设施参考。
 ---
 
 ## 常用智能搜索引擎

@@ -1,8 +1,13 @@
 ---
 title: 在 Windows 11 的 WSL2 中部署 LibreTranslate
 date: 2026-05-06
-tags: [技术笔记]
-summary: "在 Windows 11 的 WSL2 中部署 LibreTranslate"
+tags:
+  - 技术
+  - 工具
+  - 翻译
+  - WSL2
+  - Docker
+summary: 在 WSL2 环境中通过 Docker 部署 LibreTranslate 翻译服务，包含快速运行和 Docker Compose 两种部署方式。
 ---
 
 在 Windows 11 的 WSL2 中部署 LibreTranslate，最推荐的方式是结合 **Docker Desktop**。这样你可以利用 WSL2 的 Linux 内核性能，同时通过 Windows 界面方便地管理资源。
