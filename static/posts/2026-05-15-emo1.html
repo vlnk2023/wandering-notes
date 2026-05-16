@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>全链条模拟流程 · 笔记</title>
+<style>
+:root {
+  --bg:#f9f8f6; --surface:#fff; --line:#e6e2db; --line-light:#f0ede8;
+  --text:#1a1714; --text-secondary:#736b60; --text-quiet:#9a9184;
+  --accent:#1d6b72; --accent-light:#e2f0f1; --accent-dim:#315f64;
+  --code-bg:#f0ece5; --code-border:#e0dbd2; --shadow:0 1px 3px rgba(0,0,0,.04);
+  --radius:10px; --radius-sm:6px;
+}
+*,*::before,*::after { box-sizing:border-box }
+body {
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  font-size:16px; line-height:1.75; -webkit-font-smoothing:antialiased
+}
+a { color:var(--accent); text-decoration:none; transition:color .15s }
+a:hover { color:#0a4b52; text-decoration:underline }
+.topbar {
+  position:sticky; top:0; z-index:100;
+  border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.88); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px)
+}
+.nav { max-width:820px; min-height:54px; margin:0 auto; padding:0 24px; display:flex; align-items:center; gap:24px }
+.brand { font-size:15px; font-weight:700; margin-right:auto; color:var(--text); letter-spacing:-.01em }
+.brand::before { content:"\25B6"; color:var(--accent); margin-right:6px; font-size:11px }
+.nav a { color:var(--text-secondary); text-decoration:none; font-size:13px; padding:4px 0; border-bottom:2px solid transparent; transition:color .15s,border-color .15s }
+.nav a:hover, .nav a.active { color:var(--text); border-bottom-color:var(--accent); text-decoration:none }
+.wrap { max-width:820px; margin:0 auto; padding:0 24px }
+.post-hero { padding:48px 0 32px; text-align:center }
+.post-hero h1 { font-size:32px; font-weight:800; line-height:1.3; margin:0 0 12px; color:var(--text); letter-spacing:-.02em }
+.post-hero .date { display:block; color:var(--text-quiet); font-size:13px; margin-bottom:14px }
+.post-hero .tags { display:flex; gap:6px; flex-wrap:wrap; justify-content:center }
+.tag {
+  display:inline-flex; background:var(--accent-light); color:var(--accent-dim);
+  border-radius:20px; padding:3px 12px; font-size:12px; font-weight:500;
+  text-decoration:none; transition:background .15s
+}
+.tag:hover { background:#cde4e6; text-decoration:none; color:var(--accent-dim) }
+.article { max-width:720px; margin:0 auto 48px }
+.article h2 { font-size:24px; font-weight:700; margin:40px 0 14px; color:var(--text); letter-spacing:-.01em; padding-bottom:8px; border-bottom:1px solid var(--line-light) }
+.article h3 { font-size:19px; font-weight:600; margin:32px 0 10px; color:var(--text) }
+.article h4 { font-size:16px; font-weight:600; margin:24px 0 8px; color:var(--text) }
+.article p { margin:0 0 18px; color:var(--text-secondary); line-height:1.8 }
+.article ul, .article ol { margin:0 0 18px; padding-left:24px; color:var(--text-secondary) }
+.article li { margin-bottom:6px }
+.article li > ul, .article li > ol { margin-bottom:0 }
+.article hr { border:none; border-top:1px solid var(--line); margin:36px 0 }
+.article code {
+  background:var(--code-bg); border:1px solid var(--code-border); border-radius:var(--radius-sm);
+  padding:2px 6px; font-size:14px; color:var(--text);
+  font-family:"JetBrains Mono","Fira Code","Cascadia Code",Consolas,monospace
+}
+.article pre {
+  background:var(--code-bg); border:1px solid var(--code-border); border-radius:var(--radius);
+  padding:18px 20px; overflow-x:auto; font-size:13.5px; line-height:1.6; margin:0 0 20px
+}
+.article pre code { background:transparent; border:none; padding:0; font-size:inherit }
+.article blockquote {
+  margin:0 0 22px; padding:14px 20px; border-left:4px solid var(--accent);
+  color:var(--text-secondary); background:var(--accent-light);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-style:normal
+}
+.article blockquote p { margin:0; color:inherit }
+.article blockquote p + p { margin-top:10px }
+.article table { width:100%; border-collapse:collapse; margin:0 0 22px; font-size:14px }
+.article th, .article td { border:1px solid var(--line); padding:10px 14px; text-align:left; vertical-align:top }
+.article th {
+  background:var(--line-light); font-weight:600; color:var(--text);
+  font-size:13px; letter-spacing:.02em; text-transform:uppercase
+}
+.article td { color:var(--text-secondary) }
+.article tr:nth-child(even) td { background:#fcfbf9 }
+.article img { max-width:100%; border-radius:var(--radius); border:1px solid var(--line); margin:8px 0; display:block }
+.article small { font-size:13px; color:var(--text-quiet) }
+.footer {
+  max-width:720px; margin:0 auto 48px; padding-top:20px;
+  border-top:1px solid var(--line); font-size:13px;
+  color:var(--text-quiet); display:flex; justify-content:space-between; align-items:center
+}
+.back { color:var(--text-secondary); text-decoration:none; font-size:13px; transition:color .15s }
+.back:hover { color:var(--accent); text-decoration:none }
+.back::before { content:"\2190"; margin-right:4px }
+.index-header { padding:48px 0 8px; text-align:center }
+.index-header h1 { font-size:28px; font-weight:800; margin:0 0 6px; letter-spacing:-.02em }
+.index-header p { font-size:14px; color:var(--text-quiet); margin:0 }
+.post-list { max-width:640px; margin:0 auto 48px; padding:0 }
+.post-row { display:block; padding:18px 0; border-bottom:1px solid var(--line-light); text-decoration:none; transition:padding .15s,background .15s }
+.post-row:first-child { border-top:1px solid var(--line-light) }
+.post-row:hover {
+  padding-left:16px; padding-right:16px; margin:0 -16px;
+  background:var(--surface); border-radius:var(--radius);
+  box-shadow:var(--shadow); border-bottom-color:transparent; text-decoration:none
+}
+.post-row:hover + .post-row { border-top-color:transparent }
+.post-date { display:block; font-size:12px; color:var(--text-quiet); margin-bottom:4px; font-weight:500 }
+.post-title { display:block; font-size:17px; font-weight:600; color:var(--text); margin-bottom:5px; letter-spacing:-.01em }
+.post-summary { display:block; font-size:14px; color:var(--text-secondary); line-height:1.6; max-width:90% }
+.empty { text-align:center; padding:60px 0; color:var(--text-quiet); font-size:14px }
+@media (max-width:640px) {
+  .post-hero { padding:32px 0 24px }
+  .post-hero h1 { font-size:26px }
+  .article h2 { font-size:21px }
+  .article { font-size:15px }
+  .article pre { padding:14px 16px; font-size:13px }
+  .post-row:hover { padding-left:12px; padding-right:12px; margin:0 -12px }
+}
+</style>
+</head>
+<body>
+<header class="topbar"><nav class="nav"><a class="brand" href="/">Wandering Notes</a><a href="/posts">笔记</a></nav></header>
+<div class="wrap">
+<div class="post-hero"><h1>全链条模拟流程</h1><span class="date">2026-05-15</span></div><article class="article"><h1>从精准获客到网页报告交付的完整商业流程模拟</h1>
+<h2>总体定位</h2>
+<p>她要做的不是心理咨询，不是情感挽回，不是疾病诊断，也不是陪聊。</p>
+<p>最佳商业模式应该是：</p>
+<blockquote>
+<p>面向35-55岁、低能量、长期内耗、关系反复受伤、愿意读长文和做自我反思的女性，提供非医疗、非诊断、非治疗的“人生与关系模式复盘网页报告”。</p>
+</blockquote>
+<p>核心产品不是一小时聊天，而是一份结构化、可保存、可反复阅读的网页报告。</p>
+<p>一句话卖点：</p>
+<blockquote>
+<p>我用故障诊断思维，帮你复盘人生和关系里的重复模式，把混乱经历整理成一张清晰地图。</p>
+</blockquote>
+<p>她的商业闭环是：</p>
+<p>内容精准获客 -&gt; 低价自测/初筛 -&gt; 私信或表单询盘 -&gt; 伦理成交 -&gt; 付费深度问卷 -&gt; 模式分析 -&gt; 个性化网页报告 -&gt; 一次文字答疑 -&gt; 案例沉淀与复购转化。</p>
+<h1>一、基础商业设计</h1>
+<h2>1. 产品阶梯</h2>
+<p>第一层：免费内容</p>
+<p>目的不是追求泛流量，而是筛出“觉得被看见”的人。</p>
+<p>形式：</p>
+<ul>
+<li>小红书长图文</li>
+<li>公众号长文</li>
+<li>知乎回答</li>
+<li>个人网页案例库</li>
+<li>不露脸短视频，使用文字、图表、旁白</li>
+</ul>
+<p>第二层：低价入口产品</p>
+<p>目的不是赚钱，而是筛选真实付费意愿。</p>
+<p>产品示例：</p>
+<ul>
+<li>29元：《关系重复模式自测表》</li>
+<li>49元：《低能量人生卡点自查表》</li>
+<li>99元：轻量版关系模式初筛报告，1000-1500字</li>
+<li>199元：标准初筛报告，1500-2500字</li>
+</ul>
+<p>第三层：核心产品</p>
+<p>这是主要收入来源。</p>
+<p>产品名称：</p>
+<blockquote>
+<p>人生与关系模式深度复盘网页报告</p>
+</blockquote>
+<p>建议价格：</p>
+<ul>
+<li>499元：基础深度版，4000-6000字网页报告</li>
+<li>699元：标准深度版，6000-8000字网页报告 + 一次文字答疑</li>
+<li>999元：加强版，8000-10000字网页报告 + 30天后一次短复盘</li>
+</ul>
+<p>第四层：长期资产</p>
+<p>当她积累足够案例之后，再做：</p>
+<ul>
+<li>匿名案例库</li>
+<li>关系模式复盘模板</li>
+<li>低能量女性生存策略课</li>
+<li>AI自助复盘工具</li>
+<li>付费专栏</li>
+</ul>
+<p>她不能一开始就做课程。课程是后端资产，前端必须先用报告服务验证真实需求。</p>
+<h2>2. 每月产能设计</h2>
+<p>她体弱、不爱社交，所以产能要保守。</p>
+<p>初期每月目标：</p>
+<ul>
+<li>10篇内容</li>
+<li>5份199元初筛报告</li>
+<li>4份499-699元深度报告</li>
+</ul>
+<p>成熟后每月目标：</p>
+<ul>
+<li>8份深度报告</li>
+<li>10份初筛报告</li>
+<li>若干低价电子产品自动销售</li>
+</ul>
+<p>如果每份深度报告耗时4小时，8份就是32小时。加上内容、沟通和维护，月工作量约50-70小时。这个强度才可能适合她，而不是每天被客户消息追着跑。</p>
+<h1>二、精准获客流程</h1>
+<h2>1. 目标客户画像</h2>
+<p>高价值客户不是“最痛苦的人”，而是“有痛苦、有反思能力、有支付能力、有边界感的人”。</p>
+<p>最优客户画像：</p>
+<ul>
+<li>女性，35-55岁。</li>
+<li>城市或准城市生活。</li>
+<li>有稳定收入、积蓄或家庭经济支持。</li>
+<li>愿意为心理、关系、自我成长类内容付费。</li>
+<li>喜欢深度文字，不排斥填写长问卷。</li>
+<li>长期在关系、家庭、职业、自我价值中卡住。</li>
+<li>不期待被立刻拯救，而是想看清自己的模式。</li>
+</ul>
+<p>不适合客户：</p>
+<ul>
+<li>只想马上被安慰的人。</li>
+<li>只想让她判断“对方是不是坏人”的人。</li>
+<li>要求复合、挽回、操控他人的人。</li>
+<li>有自伤、自杀、严重抑郁、幻觉妄想、家暴危机等高风险情况的人。</li>
+<li>不愿意填写问卷，只想语音倾诉的人。</li>
+<li>要求她给出医学诊断或治疗建议的人。</li>
+</ul>
+<h2>2. 内容选题设计</h2>
+<p>内容不是泛心理科普，而是“让目标客户感觉自己被准确命中”。</p>
+<p>核心内容栏目：</p>
+<h3>A. 低能量女性系列</h3>
+<p>标题示例：</p>
+<ul>
+<li>为什么低能量女性不能照搬高能量人的成功学</li>
+<li>你不是懒，你可能只是长期系统过载</li>
+<li>中年女人最危险的不是没钱，而是长期失去恢复力</li>
+<li>为什么越懂事的人，到中年越容易突然崩掉</li>
+<li>低能量人生最该修的不是意志力，而是消耗结构</li>
+</ul>
+<h3>B. 关系重复模式系列</h3>
+<p>标题示例：</p>
+<ul>
+<li>为什么你总是被冷漠型伴侣吸引</li>
+<li>讨好型人格最容易误判的三种关系信号</li>
+<li>你以为你在爱，其实你在重复旧脚本</li>
+<li>关系里反复受伤的人，常常输在同一个触发点</li>
+<li>不是你遇人不淑，而是你的筛选系统出了问题</li>
+</ul>
+<h3>C. 人生模式故障复盘系列</h3>
+<p>标题示例：</p>
+<ul>
+<li>人生也会出现重复故障：如何找到你的触发条件</li>
+<li>一个人长期走不出来，往往不是因为道理懂得少</li>
+<li>你的痛苦不是随机的，它通常有一套运行逻辑</li>
+<li>为什么有些选择看似偶然，其实是旧模式自动运行</li>
+<li>如何复盘一次让你反复后悔的关系</li>
+</ul>
+<h3>D. 样例报告拆解系列</h3>
+<p>标题示例：</p>
+<ul>
+<li>一份关系模式复盘报告长什么样</li>
+<li>如何从一段失败关系里看出重复脚本</li>
+<li>一个低能量女性的人生卡点地图</li>
+<li>讨好型关系模式的故障树分析</li>
+<li>为什么“我太重感情”可能是一种防御策略</li>
+</ul>
+<h2>3. 每篇内容的结构</h2>
+<p>她的内容要有固定结构，降低创作消耗。</p>
+<p>模板：</p>
+<ol>
+<li>开头命中一个具体痛点。</li>
+<li>描述目标客户常见经历。</li>
+<li>提出一个反直觉判断。</li>
+<li>用“故障诊断思维”拆解机制。</li>
+<li>给一个小型自查问题。</li>
+<li>引导到低价自测或初筛报告。</li>
+</ol>
+<p>示例结尾：</p>
+<blockquote>
+<p>如果你发现自己总是在关系里遇到相似的人、进入相似的冲突、得到相似的结局，可以先做一份《关系重复模式自查表》。它不是诊断，也不是治疗，只是帮你把混乱经历整理成几个可观察的线索。</p>
+</blockquote>
+<h2>4. 流量入口设计</h2>
+<p>不建议她靠直播和私聊强推。</p>
+<p>更适合的入口：</p>
+<ul>
+<li>小红书：短标题 + 深度长图文，负责触达同类女性。</li>
+<li>公众号：沉淀长文和案例，建立信任。</li>
+<li>知乎：回答“为什么我总是吸引同一种伴侣”“为什么中年女性越来越低能量”等问题。</li>
+<li>个人网页：放服务说明、样例报告、购买流程、边界声明。</li>
+<li>微信：只用于收款、交付和答疑，不做无限陪聊。</li>
+</ul>
+<p>每个平台只做一件事：</p>
+<ul>
+<li>小红书负责被看见。</li>
+<li>公众号负责建立深信任。</li>
+<li>个人网页负责转化。</li>
+<li>表单负责筛选。</li>
+<li>微信负责交付。</li>
+</ul>
+<h1>三、询盘流程</h1>
+<h2>1. 客户从内容进入询盘</h2>
+<p>客户看到内容后，可能会私信：</p>
+<blockquote>
+<p>我感觉你说的就是我，我也总是在关系里重复受伤，可以帮我看看吗？</p>
+</blockquote>
+<p>她不能马上进入长聊。正确做法是把客户引导到标准流程。</p>
+<p>回复模板：</p>
+<blockquote>
+<p>可以先简单判断一下你的情况是否适合做“关系模式复盘报告”。这个服务不是心理诊断，也不是治疗或陪聊，主要是通过问卷和文字材料，帮你梳理关系里的重复模式、触发点和下一步行动建议。如果你愿意，我可以发你一份初筛表，填完后我会判断是否适合接。</p>
+</blockquote>
+<p>这样做有三个作用：</p>
+<ul>
+<li>建立专业边界。</li>
+<li>避免客户直接倾倒大量情绪。</li>
+<li>把高价值客户和高消耗客户分开。</li>
+</ul>
+<h2>2. 初筛表字段</h2>
+<p>初筛表不要太长，但必须能判断风险和购买意愿。</p>
+<p>字段建议：</p>
+<ol>
+<li>年龄段。</li>
+<li>当前最想复盘的问题：亲密关系、婚姻、家庭、自我发展、职业卡点、低能量内耗。</li>
+<li>这个问题持续多久。</li>
+<li>过去是否做过心理咨询、课程、测评或相关付费服务。</li>
+<li>你希望得到什么：安慰、判断对错、复合建议、模式分析、行动策略。</li>
+<li>是否接受文字报告而不是语音咨询。</li>
+<li>是否愿意填写3000字左右的深度问卷。</li>
+<li>是否存在自伤、自杀、严重失眠、幻觉妄想、家暴危机等紧急情况。</li>
+<li>预算范围：199以内、499以内、699以内、999以内、暂不确定。</li>
+<li>是否理解本服务非医疗、非诊断、非治疗。</li>
+</ol>
+<h2>3. 客户分层</h2>
+<p>根据初筛表，把客户分成四类。</p>
+<h3>A类：高价值客户</h3>
+<p>特征：</p>
+<ul>
+<li>问题持续半年以上。</li>
+<li>能写清楚经历。</li>
+<li>愿意读长报告。</li>
+<li>有付费经验。</li>
+<li>预算499元以上。</li>
+<li>没有明显危机风险。</li>
+<li>想要模式分析，而不是只要安慰。</li>
+</ul>
+<p>推荐产品：</p>
+<ul>
+<li>699元标准深度网页报告。</li>
+<li>或999元加强版复盘包。</li>
+</ul>
+<h3>B类：可培养客户</h3>
+<p>特征：</p>
+<ul>
+<li>有痛点，但预算有限。</li>
+<li>还不确定是否信任她。</li>
+<li>愿意填写问卷，但不愿意一次性买高价。</li>
+</ul>
+<p>推荐产品：</p>
+<ul>
+<li>99元或199元初筛报告。</li>
+</ul>
+<h3>C类：高消耗客户</h3>
+<p>特征：</p>
+<ul>
+<li>只想倾诉。</li>
+<li>不愿意填问卷。</li>
+<li>要求随时聊天。</li>
+<li>要求她站队、骂人、判断谁对谁错。</li>
+<li>情绪强烈但缺少自我反思。</li>
+</ul>
+<p>处理方式：</p>
+<ul>
+<li>不接深度报告。</li>
+<li>可推荐免费内容或低价自测。</li>
+<li>明确不提供即时陪聊。</li>
+</ul>
+<h3>D类：高风险客户</h3>
+<p>特征：</p>
+<ul>
+<li>自伤、自杀念头。</li>
+<li>疑似精神障碍。</li>
+<li>严重家暴或人身安全风险。</li>
+<li>严重抑郁、幻觉妄想、极端行为。</li>
+</ul>
+<p>处理方式：</p>
+<ul>
+<li>不接单。</li>
+<li>建议联系当地医院精神科、心理危机热线、公安或可信赖亲友。</li>
+<li>不做诊断，不做治疗承诺。</li>
+</ul>
+<h1>四、伦理成交：如何“逼单”但不操控</h1>
+<h2>1. 先重新定义“逼单”</h2>
+<p>她不能用恐吓、羞辱、制造依赖的方式逼客户下单。</p>
+<p>不应该说：</p>
+<ul>
+<li>你不处理会毁掉一生。</li>
+<li>你这种情况很严重，必须马上买。</li>
+<li>你再不改变就没人会爱你。</li>
+<li>只有我能看懂你。</li>
+<li>今天不付款就没有机会了。</li>
+</ul>
+<p>更适合的“逼单”是：</p>
+<blockquote>
+<p>帮客户判断这个服务是否适合她，然后给出一个清晰、有限、可拒绝的购买决策。</p>
+</blockquote>
+<p>也就是伦理成交。</p>
+<h2>2. 高价值客户成交话术</h2>
+<p>当客户是A类客户时，可以这样回复：</p>
+<blockquote>
+<p>从你的初筛表看，你的问题不是单次情绪事件，而是已经形成了比较稳定的关系重复模式。这个情况适合做深度复盘报告，不太适合只靠一次聊天解决。</p>
+<p>我建议你选699元的标准深度版：你填写完整问卷后，我会帮你整理关系时间线、重复模式、触发点、防御方式、当前代价，以及未来3个月更稳的行动建议。交付形式是一份网页报告，完成后可以有一次文字追问。</p>
+<p>需要提前说明：这不是心理诊断，也不承诺治愈、复合或替你做决定。如果你想要的是“有人陪你一直聊”，这个产品不适合；如果你想要的是“把这几年反复发生的事情看清楚”，这个产品比较适合。</p>
+<p>我每周只接2份深度报告。如果你确认做，我会给你付款方式和深度问卷；付款后锁定本周名额。</p>
+</blockquote>
+<p>这段话的重点：</p>
+<ul>
+<li>给出判断。</li>
+<li>说明为什么适合。</li>
+<li>明确产品和边界。</li>
+<li>用真实产能限制推动决策。</li>
+<li>给客户拒绝空间。</li>
+</ul>
+<h2>3. 预算犹豫话术</h2>
+<p>客户说：</p>
+<blockquote>
+<p>有点贵，我考虑一下。</p>
+</blockquote>
+<p>回复：</p>
+<blockquote>
+<p>可以考虑。这个报告适合已经反复困在同一个模式里、想做一次系统梳理的人；如果你现在只是想先确认方向，可以先做199元初筛版。初筛版会帮你看到主要重复线索，但不会展开完整时间线和行动方案。</p>
+<p>如果你读完初筛版后，7天内升级深度版，可以抵扣一部分费用。</p>
+</blockquote>
+<p>这样既不强推，也给了升级路径。</p>
+<h2>4. 信任不足话术</h2>
+<p>客户说：</p>
+<blockquote>
+<p>我不知道你的报告到底有没有用。</p>
+</blockquote>
+<p>回复：</p>
+<blockquote>
+<p>这个顾虑很正常。你可以先看样例报告，重点看三个部分：我怎么整理时间线，怎么判断重复模式，怎么把建议落到具体行动。你不需要相信我的人设，只需要判断这种分析方式是否适合你。</p>
+</blockquote>
+<p>这句话很重要。她不能靠“相信我”成交，而要靠样例报告成交。</p>
+<h2>5. 想要语音倾诉话术</h2>
+<p>客户说：</p>
+<blockquote>
+<p>我还是想直接跟你说，打字太累。</p>
+</blockquote>
+<p>回复：</p>
+<blockquote>
+<p>我理解你想直接说出来的需要，但我目前不做语音咨询和长期陪聊。这个服务的优势是文字材料和结构化分析。如果你更需要当下的倾听和陪伴，可能更适合找正式心理咨询师或支持性陪伴服务。</p>
+</blockquote>
+<p>这是筛选，不是丢客户。</p>
+<h2>6. 要求复合或控制对方话术</h2>
+<p>客户说：</p>
+<blockquote>
+<p>你能不能告诉我怎么让他回头？</p>
+</blockquote>
+<p>回复：</p>
+<blockquote>
+<p>我不做复合承诺，也不提供操控对方的策略。我能做的是帮你复盘这段关系里你们的互动模式、你的触发点、你的选择习惯，以及你下一步怎样更少伤害自己。如果你的目标是控制对方，这个服务不适合。</p>
+</blockquote>
+<p>这种客户即使有钱，也不一定值得接。</p>
+<h2>7. 成交后的确认信息</h2>
+<p>付款前发一次确认：</p>
+<blockquote>
+<p>请确认你理解以下几点：</p>
+<ol>
+<li>本服务是个人成长与关系模式复盘，不是心理诊断、心理治疗或医疗建议。</li>
+<li>报告基于你提供的文字材料进行分析，不保证改变关系结果，也不替你做人生决定。</li>
+<li>交付物是一份网页报告，包含一次文字追问。</li>
+<li>你需要在付款后3天内填写深度问卷。</li>
+<li>报告通常在收到完整材料后5-7个工作日内交付。</li>
+<li>涉及隐私信息会尽量脱敏保存；你可以要求删除原始材料。</li>
+</ol>
+</blockquote>
+<p>客户确认后再收款。</p>
+<h1>五、交付前的深度问卷</h1>
+<p>深度问卷是整个服务的核心。问卷质量决定报告质量。</p>
+<h2>1. 基本信息</h2>
+<ul>
+<li>昵称或代号。</li>
+<li>年龄段。</li>
+<li>婚恋状态。</li>
+<li>职业状态。</li>
+<li>是否有子女。</li>
+<li>当前身体和精力状态。</li>
+<li>是否正在接受心理咨询或医疗治疗。</li>
+</ul>
+<h2>2. 当前核心困扰</h2>
+<ul>
+<li>你最想复盘的一件事是什么？</li>
+<li>这件事困扰你多久了？</li>
+<li>你已经尝试过哪些解决方法？</li>
+<li>哪些方法短期有效，长期无效？</li>
+<li>你最想从报告中得到什么？</li>
+</ul>
+<h2>3. 关系时间线</h2>
+<p>如果是亲密关系问题：</p>
+<ul>
+<li>这段关系如何开始？</li>
+<li>最初吸引你的是什么？</li>
+<li>第一次明显不舒服发生在什么时候？</li>
+<li>冲突通常因为什么开始？</li>
+<li>每次冲突后你通常怎么反应？</li>
+<li>对方通常怎么反应？</li>
+<li>你们是否多次分开又靠近？</li>
+<li>最让你难以放下的是什么？</li>
+</ul>
+<h2>4. 重复模式</h2>
+<ul>
+<li>你过去是否遇到过相似的人？</li>
+<li>你是否多次在关系里扮演相似角色？</li>
+<li>你最常出现的反应是讨好、沉默、爆发、逃避、控制、解释、拯救，还是自责？</li>
+<li>你最害怕的结局是什么？</li>
+<li>你最难说出口的需要是什么？</li>
+</ul>
+<h2>5. 原生家庭与早期经验</h2>
+<p>这里只收集和当前问题相关的信息，不做创伤挖掘。</p>
+<ul>
+<li>童年时，家里最常见的情绪气氛是什么？</li>
+<li>你小时候更常被要求懂事、优秀、忍让、独立，还是听话？</li>
+<li>你表达需求时，通常会得到什么回应？</li>
+<li>你从小最怕谁失望？</li>
+<li>你是否习惯把别人的情绪责任揽到自己身上？</li>
+</ul>
+<h2>6. 能量与现实限制</h2>
+<ul>
+<li>你每天可用精力大概有多少？</li>
+<li>当前身体状况对你影响多大？</li>
+<li>你有哪些现实约束：经济、孩子、父母、婚姻、工作、居住地？</li>
+<li>哪些建议你明知道对，但现在做不到？</li>
+<li>你希望行动建议激进一点，还是保守一点？</li>
+</ul>
+<h2>7. 风险筛查</h2>
+<ul>
+<li>最近一个月是否有自伤或自杀念头？</li>
+<li>是否正在遭遇家暴或人身威胁？</li>
+<li>是否出现幻觉、妄想、极端失眠、失控行为？</li>
+<li>是否正在服药或接受精神科治疗？</li>
+</ul>
+<p>如果有高风险，不继续交付普通报告，而是建议客户优先寻求专业医疗和安全支持。</p>
+<h1>六、分析流程：她如何做深度个性化复盘</h1>
+<h2>1. 第一遍：材料整理</h2>
+<p>目标不是下判断，而是把客户的叙述整理成结构。</p>
+<p>整理维度：</p>
+<ul>
+<li>关键事件时间线</li>
+<li>重要人物关系图</li>
+<li>重复出现的情境</li>
+<li>客户的典型反应</li>
+<li>对方的典型反应</li>
+<li>关系中的收益与代价</li>
+<li>客户没有明说但反复出现的需求</li>
+</ul>
+<p>她可以用AI辅助整理材料，但不能让AI直接给结论。</p>
+<p>AI可做：</p>
+<ul>
+<li>摘要</li>
+<li>分类</li>
+<li>提取事件</li>
+<li>生成时间线草稿</li>
+<li>标记情绪词</li>
+<li>找重复表达</li>
+</ul>
+<p>她必须亲自做：</p>
+<ul>
+<li>核心模式判断</li>
+<li>证据取舍</li>
+<li>风险边界判断</li>
+<li>行动建议取舍</li>
+<li>最终报告语气</li>
+</ul>
+<h2>2. 第二遍：寻找“重复故障”</h2>
+<p>她过去做设备故障诊断，可以把人的关系模式也看作系统运行。</p>
+<p>分析问题：</p>
+<ul>
+<li>最频繁出现的痛苦场景是什么？</li>
+<li>每次痛苦前有什么共同触发条件？</li>
+<li>客户每次如何解释这件事？</li>
+<li>她的解释是否会让自己继续留在旧模式里？</li>
+<li>她的应对方式短期保护了什么？</li>
+<li>她的应对方式长期损耗了什么？</li>
+</ul>
+<p>示例：</p>
+<p>客户说：“我总是遇到冷漠的人。”</p>
+<p>不能只写“你吸引回避型伴侣”。要继续拆：</p>
+<ul>
+<li>她是否把稳定误读为冷淡？</li>
+<li>她是否把强烈情绪误读为真爱？</li>
+<li>她是否在对方冷淡时加倍投入？</li>
+<li>她是否把追逐过程当作关系价值证明？</li>
+<li>她是否在关系早期忽视边界信号？</li>
+</ul>
+<h2>3. 第三遍：形成核心假设</h2>
+<p>每份报告最多提出1-3个核心假设，不要塞满理论。</p>
+<p>假设格式：</p>
+<blockquote>
+<p>你当前的痛苦，不只是来自某个人，而是来自一个重复循环：你在关系早期被“稀缺回应”吸引，随后通过加倍投入换取确认；当对方退缩时，你会进入自责和补偿；短期看这维持了关系，长期看却让你越来越失去边界和自尊。</p>
+</blockquote>
+<p>好的假设必须满足：</p>
+<ul>
+<li>能解释过去多次事件。</li>
+<li>能解释客户为什么明知痛苦仍然重复。</li>
+<li>能指出短期收益和长期代价。</li>
+<li>能导向可执行的改变。</li>
+</ul>
+<h2>4. 第四遍：证据分级</h2>
+<p>为了避免武断，她应该给每个判断标注证据强度。</p>
+<p>证据等级：</p>
+<ul>
+<li>强证据：客户多次描述、不同事件中重复出现。</li>
+<li>中证据：出现过2-3次，但材料不足。</li>
+<li>弱证据：只是可能方向，需要客户自行核对。</li>
+</ul>
+<p>报告里可以这样写：</p>
+<blockquote>
+<p>这是一个中等强度假设，不是结论。它来自你在三段关系中反复提到的“对方退缩后你加倍投入”这一线索。你可以用它作为观察框架，而不是把它当作对自己的标签。</p>
+</blockquote>
+<p>这种写法既专业，也合规，不会变成“我给你下判决”。</p>
+<h2>5. 第五遍：生成行动建议</h2>
+<p>行动建议必须低能量、可执行，不能写鸡汤。</p>
+<p>不要写：</p>
+<ul>
+<li>你要爱自己。</li>
+<li>你要提高自信。</li>
+<li>你要建立边界。</li>
+<li>你要走出舒适区。</li>
+</ul>
+<p>要写：</p>
+<ul>
+<li>未来30天内，不在晚上11点后进行关系争论。</li>
+<li>每次想解释超过300字时，先停10分钟，把真正需求写成一句话。</li>
+<li>如果对方连续三次回避关键问题，不再追加追问，改为记录事实。</li>
+<li>下次进入新关系前，先观察对方是否能稳定回应三个基本问题。</li>
+<li>每周只做一次关系复盘，不允许每天反复分析同一件事。</li>
+</ul>
+<p>她的客户是低能量人群，所以建议必须小、慢、现实。</p>
+<h1>七、网页报告结构</h1>
+<p>网页报告不是普通文档换个格式，而是要让客户能清晰浏览、反复回看。</p>
+<h2>1. 技术形态</h2>
+<p>初期不要做复杂系统。</p>
+<p>可选方案：</p>
+<ul>
+<li>Markdown转HTML静态网页。</li>
+<li>Notion页面导出PDF或网页。</li>
+<li>飞书文档 + 私密链接。</li>
+<li>本地HTML文件打包交付。</li>
+</ul>
+<p>隐私优先级：</p>
+<ul>
+<li>最安全：生成离线HTML文件，压缩包加密码发送。</li>
+<li>次安全：私密云盘链接，设置有效期和访问密码。</li>
+<li>不建议：公开网页、可搜索网页、长期无密码链接。</li>
+</ul>
+<p>报告里不要出现客户真实姓名、手机号、身份证、公司等敏感信息。统一用代号。</p>
+<h2>2. 网页报告目录</h2>
+<p>建议结构：</p>
+<h3>0. 阅读说明与边界声明</h3>
+<p>内容：</p>
+<ul>
+<li>本报告是个人成长与关系模式复盘。</li>
+<li>不是心理诊断、心理治疗或医疗建议。</li>
+<li>报告基于客户提供的文字材料。</li>
+<li>如果存在危机风险，应优先求助专业医疗或安全机构。</li>
+</ul>
+<h3>1. 你的核心问题摘要</h3>
+<p>用300-500字概括客户的困境。</p>
+<p>目标是让客户一开头就感觉：</p>
+<blockquote>
+<p>她真的读懂了我的材料。</p>
+</blockquote>
+<h3>2. 关系/人生时间线</h3>
+<p>用时间轴展示关键事件。</p>
+<p>格式示例：</p>
+<ul>
+<li>阶段一：吸引与快速投入</li>
+<li>阶段二：不安信号出现</li>
+<li>阶段三：客户开始补偿和解释</li>
+<li>阶段四：关系进入追逐-退缩循环</li>
+<li>阶段五：客户精力耗尽但仍难以退出</li>
+</ul>
+<h3>3. 重复模式地图</h3>
+<p>这是报告核心。</p>
+<p>可用结构：</p>
+<p>触发事件 -&gt; 自动解释 -&gt; 情绪反应 -&gt; 行为反应 -&gt; 对方反馈 -&gt; 短期收益 -&gt; 长期代价。</p>
+<p>示例：</p>
+<blockquote>
+<p>对方变冷淡 -&gt; 你解释为“我不够好” -&gt; 焦虑和羞耻 -&gt; 加倍投入、解释、讨好 -&gt; 对方更退缩 -&gt; 短期获得一点回应 -&gt; 长期形成追逐循环。</p>
+</blockquote>
+<h3>4. 你的主要防御方式</h3>
+<p>不要批判客户，而要解释这些方式曾经如何保护她。</p>
+<p>可能包括：</p>
+<ul>
+<li>讨好</li>
+<li>过度解释</li>
+<li>情绪压抑</li>
+<li>过度理性化</li>
+<li>拯救别人</li>
+<li>先自责再愤怒</li>
+<li>关系里过度承担责任</li>
+</ul>
+<p>写法：</p>
+<blockquote>
+<p>讨好不是你的道德缺陷，它很可能是你过去用来维持安全的一种策略。但当它进入亲密关系后，会让你把“被回应”误认为“必须继续付出才能换来”。</p>
+</blockquote>
+<h3>5. 深层需求与误判</h3>
+<p>分析客户真正想要什么，以及她在哪里误判。</p>
+<p>可能的深层需求：</p>
+<ul>
+<li>被稳定选择</li>
+<li>被看见</li>
+<li>被允许脆弱</li>
+<li>被平等对待</li>
+<li>不再一个人扛</li>
+<li>能量被尊重</li>
+</ul>
+<p>常见误判：</p>
+<ul>
+<li>把强烈吸引误判为适合。</li>
+<li>把对方偶尔回应误判为关系还有希望。</li>
+<li>把自己能忍误判为关系稳定。</li>
+<li>把痛苦强度误判为爱的深度。</li>
+</ul>
+<h3>6. 当前模式的收益与代价</h3>
+<p>这个部分很重要。客户之所以重复，不是因为笨，而是旧模式有短期收益。</p>
+<p>写法：</p>
+<blockquote>
+<p>这个模式的短期收益是：你不用立刻面对失去，可以维持关系连接感，也能证明自己已经尽力。<br />
+长期代价是：你的边界越来越弱，自我价值越来越依赖对方回应，身体和情绪越来越透支。</p>
+</blockquote>
+<h3>7. 关键分岔点</h3>
+<p>指出未来最重要的选择点。</p>
+<p>示例：</p>
+<ul>
+<li>当对方再次回避关键问题时，你是否继续追问？</li>
+<li>当你想用解释换取理解时，你能否先暂停？</li>
+<li>当你感到内疚时，你能否区分“我真的做错了”和“我只是害怕别人失望”？</li>
+<li>当关系让你持续失眠和消耗时，你是否仍把它定义为爱？</li>
+</ul>
+<h3>8. 未来30天行动方案</h3>
+<p>行动建议必须非常具体。</p>
+<p>结构：</p>
+<ul>
+<li>第1周：停止恶化</li>
+<li>第2周：观察模式</li>
+<li>第3周：练习边界</li>
+<li>第4周：做一个小决定</li>
+</ul>
+<p>每周最多3个动作，不能太多。</p>
+<h3>9. 未来90天策略</h3>
+<p>聚焦长期改变。</p>
+<p>包括：</p>
+<ul>
+<li>关系筛选标准</li>
+<li>情绪触发记录</li>
+<li>低能量保护规则</li>
+<li>必须停止的行为</li>
+<li>可以开始的小习惯</li>
+</ul>
+<h3>10. 风险提醒与求助边界</h3>
+<p>包括：</p>
+<ul>
+<li>哪些情况需要心理咨询。</li>
+<li>哪些情况需要精神科或医院。</li>
+<li>哪些情况需要报警或寻求安全保护。</li>
+<li>哪些情况不适合继续购买她的服务。</li>
+</ul>
+<h3>11. 一句话结论</h3>
+<p>报告最后给一个清晰、克制的总结。</p>
+<p>示例：</p>
+<blockquote>
+<p>你真正要修复的，不是某一段关系，而是那个一遇到冷淡就自动进入自责、补偿和追逐的旧系统。</p>
+</blockquote>
+<p>这句话要像“核心诊断”，但不能叫诊断。</p>
+<h1>八、模拟一条完整客户路径</h1>
+<h2>阶段1：客户看到内容</h2>
+<p>客户：42岁女性，离异，有一段持续两年的关系，对方忽冷忽热。她长期失眠、低能量，看过很多情感博主，但越来越混乱。</p>
+<p>她在小红书看到文章：</p>
+<blockquote>
+<p>《为什么你总是被冷漠型伴侣吸引》</p>
+</blockquote>
+<p>文章里有一段：</p>
+<blockquote>
+<p>你以为自己是在等一个人改变，其实你可能是在重复一个更早形成的模式：当回应稀缺时，你会加倍投入；当你越投入，对方越退；对方越退，你越想证明自己值得被爱。</p>
+</blockquote>
+<p>客户产生强共鸣，收藏并私信。</p>
+<h2>阶段2：私信询盘</h2>
+<p>客户：</p>
+<blockquote>
+<p>你写的太像我了，我现在就是这种状态。能不能帮我看看？</p>
+</blockquote>
+<p>她回复：</p>
+<blockquote>
+<p>可以先做一个初筛。我的服务不是心理诊断，也不是情感挽回，主要是通过问卷和文字材料，帮你复盘关系里的重复模式。如果你愿意，我发你一份5分钟初筛表，我会根据情况判断适合初筛报告还是深度报告。</p>
+</blockquote>
+<p>客户填写初筛。</p>
+<h2>阶段3：初筛判断</h2>
+<p>客户信息：</p>
+<ul>
+<li>42岁。</li>
+<li>有稳定工作。</li>
+<li>问题持续两年。</li>
+<li>曾购买心理课程和情感课程。</li>
+<li>预算699元以内。</li>
+<li>接受文字报告。</li>
+<li>愿意填写长问卷。</li>
+<li>没有自伤和家暴风险。</li>
+<li>想知道为什么自己走不出来。</li>
+</ul>
+<p>判断：</p>
+<blockquote>
+<p>A类高价值客户，适合699元标准深度网页报告。</p>
+</blockquote>
+<h2>阶段4：成交推进</h2>
+<p>她回复：</p>
+<blockquote>
+<p>你的情况更适合做深度版，而不是初筛版。原因是：你不是单次失恋困扰，而是已经形成了比较稳定的追逐-退缩循环；如果只做初筛，可能只能看到表层线索，无法展开时间线和行动方案。</p>
+<p>标准深度版是699元。你填写完整问卷后，我会交付一份网页报告，包括：关系时间线、重复模式地图、触发点、防御方式、当前收益与代价、30天行动方案，以及一次文字追问。</p>
+<p>它不承诺复合，也不替你决定要不要离开。它适合你现在这种“想把自己看清楚，而不是只想被安慰”的状态。</p>
+<p>我这周还可以接1份深度报告。如果确认，我发你付款方式和深度问卷；如果你想先试试，也可以做199元初筛版。</p>
+</blockquote>
+<p>客户选择699元。</p>
+<h2>阶段5：付款与确认</h2>
+<p>付款前确认：</p>
+<blockquote>
+<p>请确认你理解：本报告不是心理诊断、治疗或医疗建议；不承诺改变对方或改变关系结果；报告基于你提供的文字材料；交付后包含一次文字追问。你的材料会脱敏保存，可在交付后要求删除原始问卷。</p>
+</blockquote>
+<p>客户确认并付款。</p>
+<h2>阶段6：客户填写深度问卷</h2>
+<p>她发出问卷，并提醒：</p>
+<blockquote>
+<p>不需要写得漂亮，只要尽量真实。你可以分几次填写。越具体，报告越准确；如果有不想写的部分，可以跳过。</p>
+</blockquote>
+<p>客户提交约5000字材料。</p>
+<h2>阶段7：她做分析</h2>
+<p>她先让AI辅助提取：</p>
+<ul>
+<li>关系时间线</li>
+<li>高频情绪词</li>
+<li>冲突场景</li>
+<li>客户行为反应</li>
+<li>对方行为反应</li>
+<li>重复句子</li>
+</ul>
+<p>然后她人工判断：</p>
+<p>核心模式可能是：</p>
+<blockquote>
+<p>稀缺回应吸引 -&gt; 自我怀疑 -&gt; 加倍投入 -&gt; 对方退缩 -&gt; 短暂回应 -&gt; 继续投入。</p>
+</blockquote>
+<p>主要防御方式：</p>
+<ul>
+<li>过度解释</li>
+<li>讨好</li>
+<li>自责</li>
+<li>用理解对方来压制自己的愤怒</li>
+</ul>
+<p>深层需求：</p>
+<ul>
+<li>被稳定选择</li>
+<li>被认真回应</li>
+<li>不再靠表现换取关系安全感</li>
+</ul>
+<p>行动重点：</p>
+<ul>
+<li>停止追逐式沟通。</li>
+<li>建立最低回应标准。</li>
+<li>把“他偶尔对我好”从证据降级为噪音。</li>
+<li>观察自己的冲动，而不是立刻行动。</li>
+</ul>
+<h2>阶段8：生成网页报告</h2>
+<p>网页标题：</p>
+<blockquote>
+<p>关系重复模式复盘报告：从追逐-退缩循环中看见你的旧系统</p>
+</blockquote>
+<p>报告目录：</p>
+<ol>
+<li>阅读说明</li>
+<li>核心困扰摘要</li>
+<li>关系时间线</li>
+<li>追逐-退缩循环地图</li>
+<li>你的三个高频触发点</li>
+<li>你的防御方式：过度解释、讨好与自责</li>
+<li>你真正想要的不是这个人，而是稳定回应</li>
+<li>这套模式的短期收益与长期代价</li>
+<li>未来30天行动方案</li>
+<li>三个关键分岔点</li>
+<li>风险提醒</li>
+<li>一句话结论</li>
+</ol>
+<h2>阶段9：交付报告</h2>
+<p>她发给客户：</p>
+<blockquote>
+<p>报告已完成。建议你不要在情绪很激烈的时候一次性读完，可以分两次阅读。第一次只看前半部分，确认时间线和模式是否准确；第二次再看行动建议。读完后，你可以整理3个问题，我会做一次文字回复。</p>
+</blockquote>
+<p>客户读完后提问。</p>
+<h2>阶段10：一次文字答疑</h2>
+<p>客户问：</p>
+<blockquote>
+<p>那我是不是应该离开他？</p>
+</blockquote>
+<p>她不替客户做决定，而是回复：</p>
+<blockquote>
+<p>我不能替你决定离开或留下。根据报告，你现在最需要观察的不是“他爱不爱你”，而是他是否能在关键问题上给出稳定、清晰、尊重边界的回应。你可以用30天作为观察期，只看事实：他是否愿意讨论关系规则、是否尊重你的表达、是否停止忽冷忽热。如果三个核心问题都没有变化，你再评估继续投入的代价。</p>
+</blockquote>
+<p>这就是她的价值：不命令、不操控、不许诺，但把判断框架给清楚。</p>
+<h2>阶段11：复购与转介绍</h2>
+<p>答疑结束后，她可以轻度引导：</p>
+<blockquote>
+<p>如果这份报告对你有帮助，30天后可以做一次短复盘，看看你是否又回到了旧循环里。也欢迎你把服务介绍给同样适合“文字复盘”而不是即时陪聊的人。</p>
+</blockquote>
+<p>不需要强推。</p>
+<h1>九、报告生成工作流</h1>
+<h2>1. 文件结构</h2>
+<p>每个客户建立一个脱敏文件夹：</p>
+<pre><code class="language-text">clients/
+  2026-05-client-a042/
+    intake.md
+    ai-summary.md
+    analysis-notes.md
+    report.md
+    report.html
+    assets/
+      style.css
+</code></pre>
+<p>不要用客户真实姓名命名文件夹。</p>
+<h2>2. 报告模板</h2>
+<p>每份报告都用固定模板：</p>
+<pre><code class="language-text"># 报告标题
+
+## 阅读说明
+
+## 一、核心困扰摘要
+
+## 二、关键事件时间线
+
+## 三、重复模式地图
+
+## 四、情绪触发点
+
+## 五、防御方式与短期收益
+
+## 六、深层需求与常见误判
+
+## 七、当前模式的长期代价
+
+## 八、未来30天行动方案
+
+## 九、未来90天策略
+
+## 十、风险提醒与求助边界
+
+## 一句话结论
+</code></pre>
+<h2>3. AI辅助提示词</h2>
+<p>AI只能做整理，不做最终判断。</p>
+<p>提示词示例：</p>
+<pre><code class="language-text">你是一个材料整理助手。请根据以下客户问卷，提取：
+1. 关键事件时间线
+2. 重复出现的人物互动模式
+3. 客户反复出现的情绪词
+4. 客户的典型行为反应
+5. 对方的典型行为反应
+6. 需要人工进一步判断的疑点
+
+不要做心理诊断，不要使用疾病标签，不要给治疗建议。
+</code></pre>
+<p>第二个提示词：</p>
+<pre><code class="language-text">请把以下材料整理成“触发事件 -&gt; 客户自动解释 -&gt; 情绪反应 -&gt; 行为反应 -&gt; 对方反馈 -&gt; 短期收益 -&gt; 长期代价”的表格。
+
+要求：
+- 只基于材料，不要编造。
+- 不使用人格障碍、抑郁症、焦虑症等诊断词。
+- 对不确定内容标注“材料不足”。
+</code></pre>
+<h2>4. 人工复核清单</h2>
+<p>每份报告交付前，她必须检查：</p>
+<ul>
+<li>是否用了“诊断、治疗、治愈、人格障碍”等高风险词。</li>
+<li>是否承诺了复合、改变他人、彻底走出痛苦。</li>
+<li>是否替客户做重大决定。</li>
+<li>是否泄露真实姓名、公司、地址、手机号。</li>
+<li>是否有高风险信号没有处理。</li>
+<li>行动建议是否符合客户的低能量现实。</li>
+<li>每个核心判断是否有材料依据。</li>
+<li>语气是否克制，不羞辱客户。</li>
+</ul>
+<h1>十、高价值客户的个性化需求如何对应报告内容</h1>
+<h2>1. 客户想知道“为什么我总是这样”</h2>
+<p>对应模块：</p>
+<ul>
+<li>重复模式地图</li>
+<li>核心假设</li>
+<li>时间线</li>
+<li>触发链条</li>
+</ul>
+<p>报告重点：</p>
+<blockquote>
+<p>不是给她贴标签，而是还原她如何一步步进入旧循环。</p>
+</blockquote>
+<h2>2. 客户想知道“这段关系还要不要继续”</h2>
+<p>对应模块：</p>
+<ul>
+<li>关键分岔点</li>
+<li>最低关系标准</li>
+<li>30天观察指标</li>
+<li>决策树</li>
+</ul>
+<p>报告重点：</p>
+<blockquote>
+<p>不替她决定，而是给她判断事实的框架。</p>
+</blockquote>
+<h2>3. 客户想知道“我是不是有问题”</h2>
+<p>对应模块：</p>
+<ul>
+<li>防御方式的短期保护</li>
+<li>深层需求</li>
+<li>收益与代价</li>
+</ul>
+<p>报告重点：</p>
+<blockquote>
+<p>把“我有问题”改成“我形成了一套曾经保护我、现在开始损耗我的系统”。</p>
+</blockquote>
+<h2>4. 客户想知道“我下一步怎么做”</h2>
+<p>对应模块：</p>
+<ul>
+<li>30天行动方案</li>
+<li>90天策略</li>
+<li>低能量保护规则</li>
+</ul>
+<p>报告重点：</p>
+<blockquote>
+<p>建议要小到她真的能做，而不是写正确废话。</p>
+</blockquote>
+<h2>5. 客户想获得强烈被理解感</h2>
+<p>对应模块：</p>
+<ul>
+<li>核心困扰摘要</li>
+<li>原话摘录</li>
+<li>关系时间线</li>
+</ul>
+<p>报告重点：</p>
+<blockquote>
+<p>前1000字要让客户感到“她真的读懂了我”，否则后面的分析很难被接受。</p>
+</blockquote>
+<h1>十一、网页报告的视觉与交互设计</h1>
+<p>网页报告要像一个私人分析档案，不要像营销页面。</p>
+<h2>1. 风格</h2>
+<p>建议：</p>
+<ul>
+<li>白底或浅灰底。</li>
+<li>深色正文。</li>
+<li>清晰目录。</li>
+<li>少装饰。</li>
+<li>多分段。</li>
+<li>关键结论用提示框。</li>
+<li>行动建议用清单。</li>
+<li>时间线用纵向轴。</li>
+<li>模式循环用简单流程图。</li>
+</ul>
+<p>不建议：</p>
+<ul>
+<li>大面积粉色、紫色、玄学风。</li>
+<li>夸张疗愈图片。</li>
+<li>过度情绪化标题。</li>
+<li>用“病历”“诊断书”等医疗化视觉。</li>
+</ul>
+<h2>2. 网页模块</h2>
+<p>可以设计为：</p>
+<ul>
+<li>顶部：报告标题、客户代号、交付日期。</li>
+<li>左侧或顶部：目录导航。</li>
+<li>正文：分章节。</li>
+<li>重点卡片：核心模式、三条触发点、三条行动建议。</li>
+<li>底部：边界声明、隐私说明、答疑方式。</li>
+</ul>
+<h2>3. 个性化组件</h2>
+<p>每份报告至少包含三个个性化组件：</p>
+<h3>A. 关系循环图</h3>
+<p>示例：</p>
+<pre><code class="language-text">对方冷淡
+  -&gt; 你开始自我怀疑
+  -&gt; 你加倍投入和解释
+  -&gt; 对方短暂回应
+  -&gt; 你获得希望
+  -&gt; 对方再次退缩
+  -&gt; 循环重启
+</code></pre>
+<h3>B. 触发点地图</h3>
+<p>示例：</p>
+<pre><code class="language-text">触发点1：对方长时间不回复
+自动解释：我是不是不重要
+身体反应：胸口发紧、反复看手机
+行为反应：发长消息、解释、试图证明
+替代动作：先记录事实，24小时内不追加解释
+</code></pre>
+<h3>C. 30天行动表</h3>
+<p>示例：</p>
+<pre><code class="language-text">第1周：停止深夜沟通和长篇解释
+第2周：记录三次触发点，不急着行动
+第3周：提出一个具体关系需求
+第4周：根据对方实际回应评估投入程度
+</code></pre>
+<h1>十二、售后与复购设计</h1>
+<h2>1. 一次文字答疑</h2>
+<p>答疑规则：</p>
+<ul>
+<li>客户在交付后7天内提交最多3个问题。</li>
+<li>她集中回复一次。</li>
+<li>不开启连续聊天。</li>
+<li>不接收深夜情绪倾诉。</li>
+</ul>
+<p>答疑回复格式：</p>
+<ol>
+<li>先确认客户问题。</li>
+<li>指向报告中的对应模块。</li>
+<li>给一个可执行动作。</li>
+<li>提醒边界。</li>
+</ol>
+<h2>2. 30天复盘产品</h2>
+<p>适合深度报告客户。</p>
+<p>产品：</p>
+<blockquote>
+<p>30天后短复盘，199-299元。</p>
+</blockquote>
+<p>内容：</p>
+<ul>
+<li>看客户是否执行行动建议。</li>
+<li>是否回到旧循环。</li>
+<li>是否出现新的触发点。</li>
+<li>调整下一步策略。</li>
+</ul>
+<h2>3. 转介绍机制</h2>
+<p>不要用夸张裂变。</p>
+<p>可以说：</p>
+<blockquote>
+<p>如果你身边有人也适合文字复盘，而不是需要即时陪聊，可以把样例报告介绍给她。为保护隐私，你不用转发自己的报告。</p>
+</blockquote>
+<p>可以给：</p>
+<ul>
+<li>老客户50元抵扣券。</li>
+<li>新客户初筛报告优惠。</li>
+</ul>
+<h1>十三、风险控制</h1>
+<h2>1. 合规边界</h2>
+<p>必须避免：</p>
+<ul>
+<li>心理诊断</li>
+<li>心理治疗</li>
+<li>精神障碍判断</li>
+<li>治愈承诺</li>
+<li>复合承诺</li>
+<li>危机干预承诺</li>
+<li>医疗建议</li>
+</ul>
+<p>按照《中华人民共和国精神卫生法》，心理咨询人员不得从事心理治疗或者精神障碍的诊断、治疗；发现可能患有精神障碍的，应建议到符合规定的医疗机构就诊。</p>
+<h2>2. 隐私边界</h2>
+<p>这类服务会收集大量个人经历、关系细节、健康和情绪信息，必须按敏感信息对待。</p>
+<p>最低要求：</p>
+<ul>
+<li>明确告知收集目的。</li>
+<li>只收集完成报告必要的信息。</li>
+<li>不要求身份证、真实地址、单位全称。</li>
+<li>文件夹和报告使用代号。</li>
+<li>不公开客户案例，除非获得明确同意并充分脱敏。</li>
+<li>客户要求删除原始材料时，应执行。</li>
+</ul>
+<p>《中华人民共和国个人信息保护法》对敏感个人信息有更高保护要求，医疗健康等信息属于敏感个人信息范畴，只有在特定目的和充分必要、并采取严格保护措施时才适合处理。</p>
+<h2>3. 宣传边界</h2>
+<p>宣传时不能说：</p>
+<ul>
+<li>保证让你走出来。</li>
+<li>让他重新爱上你。</li>
+<li>根治原生家庭创伤。</li>
+<li>准确诊断你的人格问题。</li>
+<li>100%看透关系真相。</li>
+</ul>
+<p>更适合说：</p>
+<ul>
+<li>帮你复盘关系里的重复模式。</li>
+<li>帮你整理情绪触发链条。</li>
+<li>帮你形成更清晰的行动框架。</li>
+<li>非医疗、非诊断、非治疗。</li>
+</ul>
+<p>《中华人民共和国广告法》和《中华人民共和国消费者权益保护法》都强调宣传信息应真实，不得虚假或误导消费者。她的服务尤其要避免效果保证。</p>
+<h1>十四、关键指标</h1>
+<p>她每月只看五个指标：</p>
+<ol>
+<li>内容收藏率：说明是否命中痛点。</li>
+<li>初筛表填写数：说明是否愿意进一步接触。</li>
+<li>初筛到付款转化率：说明信任是否足够。</li>
+<li>报告完成耗时：说明体力是否可持续。</li>
+<li>客户读后反馈和转介绍：说明产品是否真有价值。</li>
+</ol>
+<p>初期判断标准：</p>
+<ul>
+<li>10篇内容带来20份初筛表，说明方向有吸引力。</li>
+<li>20份初筛表中有3-5人愿意付费，说明有商业需求。</li>
+<li>付费客户中至少1人升级深度报告，说明有溢价空间。</li>
+<li>每份深度报告耗时不超过6小时，说明身体上可持续。</li>
+</ul>
+<h1>十五、最终SOP清单</h1>
+<h2>每周动作</h2>
+<ol>
+<li>写2-3篇深度内容。</li>
+<li>发布1个样例报告片段。</li>
+<li>回复询盘，但只引导到表单。</li>
+<li>筛选客户，不适合的坚决不接。</li>
+<li>每周最多接2份深度报告。</li>
+<li>每份报告交付后收集反馈。</li>
+<li>把高频问题整理成下一周内容。</li>
+</ol>
+<h2>每个客户动作</h2>
+<ol>
+<li>内容触达。</li>
+<li>私信询盘。</li>
+<li>发送初筛表。</li>
+<li>分为A/B/C/D类客户。</li>
+<li>给出产品建议。</li>
+<li>付款前确认边界。</li>
+<li>收款。</li>
+<li>发送深度问卷。</li>
+<li>AI辅助整理材料。</li>
+<li>人工分析核心模式。</li>
+<li>生成网页报告。</li>
+<li>交付报告。</li>
+<li>一次文字答疑。</li>
+<li>询问反馈。</li>
+<li>适度引导30天复盘或转介绍。</li>
+</ol>
+<h1>十六、最终判断</h1>
+<p>这套流程能否成立，关键不是她会不会聊天，而是她能不能把“人的复杂痛苦”变成一个可交付、可理解、可复盘、可保存的分析产品。</p>
+<p>她的成交不应该靠热情推销，而应该靠三件事：</p>
+<ul>
+<li>内容让客户感到被准确看见。</li>
+<li>样例报告让客户知道会得到什么。</li>
+<li>初筛流程让她只服务适合的人。</li>
+</ul>
+<p>她的交付不应该靠情绪承接，而应该靠四件事：</p>
+<ul>
+<li>时间线</li>
+<li>重复模式</li>
+<li>触发链条</li>
+<li>行动框架</li>
+</ul>
+<p>她最值得坚持的一条边界是：</p>
+<blockquote>
+<p>不做即时陪聊，不做心理诊断，不做治愈承诺，只做深度、克制、结构化的人生与关系模式复盘。</p>
+</blockquote>
+<p>如果这条边界守住了，这个模式才可能既帮到客户，也保住她自己的体力和生活。</p>
+<h1>参考资料</h1>
+<ul>
+<li>中国人大网：《中华人民共和国精神卫生法》。https://www.npc.gov.cn/c2/c30834/201905/t20190521_281477.html</li>
+<li>中国人大网：《中华人民共和国个人信息保护法》。https://www.npc.gov.cn/WZWSREL25wYy9jMi9jMzA4MzQvMjAyMTA4L3QyMDIxMDgyMF8zMTMwODguaHRtbD9yZWY9aW1i</li>
+<li>中国人大网：《中华人民共和国广告法》。https://www.npc.gov.cn/zgrdw/npc/xinwen/2018-11/05/content_2065663.htm</li>
+<li>中国人大网：《中华人民共和国消费者权益保护法》。https://www.npc.gov.cn/npc/c1773/c1848/c21114/c21170/c21174/201905/t20190521_179476.html</li>
+</ul>
+</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></div>
+</body>
+</html>
