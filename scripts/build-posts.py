@@ -103,15 +103,15 @@ button,input,select { font:inherit }
 }
 .nav {
   max-width:1120px;
-  min-height:60px;
+  min-height:64px;
   margin:0 auto;
   padding:0 24px;
   display:flex;
   align-items:center;
-  gap:22px;
+  gap:16px;
 }
 .brand {
-  margin-right:auto;
+  flex:0 0 auto;
   color:var(--ink);
   font-size:16px;
   font-weight:800;
@@ -141,6 +141,53 @@ button,input,select { font:inherit }
   color:var(--ink);
   border-bottom-color:var(--accent);
 }
+.nav-search {
+  flex:1 1 520px;
+  max-width:560px;
+  margin-left:auto;
+}
+.nav-search-box {
+  position:relative;
+}
+.nav-search-box::before {
+  content:"⌕";
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--quiet);
+  font-size:20px;
+  z-index:1;
+}
+.nav-search #searchInput {
+  width:100%;
+  min-height:42px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,250,241,.94);
+  color:var(--ink);
+  outline:none;
+  padding:0 76px 0 44px;
+}
+.nav-search #searchInput:focus {
+  border-color:rgba(14,111,109,.55);
+  box-shadow:0 0 0 4px rgba(14,111,109,.12);
+}
+.nav-search-submit {
+  position:absolute;
+  right:5px;
+  top:5px;
+  min-height:32px;
+  padding:0 14px;
+  border:0;
+  border-radius:999px;
+  background:var(--ink);
+  color:#fffaf1;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:900;
+}
+.nav-search-submit:hover { background:var(--accent-deep) }
 .wrap,
 .home-shell {
   width:min(1120px, 100%);
@@ -337,23 +384,71 @@ button,input,select { font:inherit }
   color:var(--ink);
   background:#fffaf1;
 }
-.footer {
-  max-width:760px;
-  margin:0 auto 54px;
-  padding-top:20px;
-  border-top:1px solid var(--line);
+.index-strip {
+  padding:28px 0 16px;
   display:flex;
+  align-items:flex-end;
   justify-content:space-between;
-  align-items:center;
-  color:var(--quiet);
-  font-size:14px;
+  gap:18px;
 }
-.back {
+.index-strip h1 {
+  margin:0;
+  font-size:clamp(28px, 5vw, 48px);
+  line-height:1;
+  letter-spacing:-.05em;
+  font-weight:950;
+}
+.index-strip p {
+  margin:8px 0 0;
   color:var(--muted);
-  font-weight:800;
-  text-decoration:none;
+  font-size:15px;
 }
-.back:hover { color:var(--accent); text-decoration:none }
+.index-metrics {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:8px;
+}
+.index-metric {
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,253,248,.74);
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+}
+.index-toolbar {
+  margin:0 0 20px;
+  padding:12px 0 18px;
+  border-top:1px solid rgba(230,222,208,.72);
+  border-bottom:1px solid rgba(230,222,208,.72);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.index-toolbar .search-meta {
+  margin:0;
+}
+.index-toolbar-controls {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.index-toolbar #sortSelect {
+  width:auto;
+  min-width:136px;
+  min-height:40px;
+  border-radius:999px;
+}
+.index-toolbar .clear-btn {
+  min-height:40px;
+  border-radius:999px;
+}
 .index-hero {
   padding:58px 0 24px;
   display:grid;
@@ -584,7 +679,7 @@ kbd {
 }
 .sidebar {
   position:sticky;
-  top:176px;
+  top:84px;
   display:grid;
   gap:16px;
 }
@@ -770,10 +865,16 @@ mark {
   }
 }
 @media (max-width:680px) {
-  .nav { padding:0 18px; gap:14px }
+  .nav { min-height:0; padding:10px 18px; gap:10px 14px; flex-wrap:wrap }
+  .nav-search { order:3; flex-basis:100%; max-width:none; margin-left:0 }
   .home-shell,
   .wrap,
   .post-wrap { padding:0 18px }
+  .index-strip { align-items:flex-start; flex-direction:column; padding-top:22px }
+  .index-metrics { justify-content:flex-start }
+  .index-toolbar { align-items:flex-start; flex-direction:column }
+  .index-toolbar-controls { width:100%; align-items:stretch }
+  .index-toolbar #sortSelect { flex:1; width:100% }
   .index-hero { padding-top:34px }
   .hero-copy { padding:26px }
   .hero-copy p { font-size:16px }
@@ -792,6 +893,7 @@ INDEX_SCRIPT = r"""
 (() => {
   const posts = JSON.parse(document.getElementById("posts-data").textContent);
   const els = {
+    form: document.getElementById("navSearchForm"),
     search: document.getElementById("searchInput"),
     sort: document.getElementById("sortSelect"),
     clear: document.getElementById("clearFilters"),
@@ -800,12 +902,7 @@ INDEX_SCRIPT = r"""
     activeFilters: document.getElementById("activeFilters"),
     postList: document.getElementById("postList"),
     empty: document.getElementById("emptyState"),
-    resultCount: document.getElementById("resultCount"),
-    latestList: document.getElementById("latestList"),
-    totalPosts: document.getElementById("totalPosts"),
-    totalTags: document.getElementById("totalTags"),
-    totalMonths: document.getElementById("totalMonths"),
-    latestDate: document.getElementById("latestDate")
+    resultCount: document.getElementById("resultCount")
   };
 
   const state = { q: "", tag: "", month: "", sort: "new" };
@@ -964,16 +1061,6 @@ INDEX_SCRIPT = r"""
       </button>
     `).join("");
 
-    els.totalPosts.textContent = posts.length;
-    els.totalTags.textContent = tagCounts.length;
-    els.totalMonths.textContent = monthCounts.length;
-    els.latestDate.textContent = posts[0]?.date || "-";
-    els.latestList.innerHTML = posts.slice(0, 3).map((post) => `
-      <a class="latest-item" href="${urlFor(post)}">
-        <span>${escapeHtml(post.date)}</span>
-        <strong>${escapeHtml(post.title)}</strong>
-      </a>
-    `).join("");
   }
 
   function renderActiveFilters() {
@@ -1023,6 +1110,12 @@ INDEX_SCRIPT = r"""
   els.search.addEventListener("input", () => {
     state.q = els.search.value.trim();
     apply(true);
+  });
+
+  els.form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    state.q = els.search.value.trim();
+    apply();
   });
 
   els.sort.addEventListener("change", () => {
@@ -1200,6 +1293,13 @@ def render_page_head(title: str, description: str = SITE_SUBTITLE) -> str:
 <header class="topbar">
   <nav class="nav" aria-label="主导航">
     <a class="brand" href="/posts">{esc(SITE_NAME)}</a>
+    <form class="nav-search" id="navSearchForm" action="/posts" method="get" role="search">
+      <label class="sr-only" for="searchInput">全文搜索</label>
+      <div class="nav-search-box">
+        <input id="searchInput" name="q" type="search" placeholder="搜索标题、正文、标签..." autocomplete="off">
+        <button class="nav-search-submit" type="submit">搜索</button>
+      </div>
+    </form>
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
@@ -1234,7 +1334,6 @@ def render_post_html(title: str, date_str: str, tags: list[str], body_html: str,
             '<article class="article">',
             body_html,
             "</article>",
-            '<footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = \'/posts\'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer>',
             "</main>",
             PAGE_TAIL,
         ]
@@ -1304,46 +1403,32 @@ def render_index_html(posts: list[dict]) -> str:
         for post in posts
     ]
 
-    initial_latest = "".join(
-        f'<a class="latest-item" href="{esc(post_url(post["slug"]))}"><span>{esc(post["date"])}</span><strong>{esc(post["title"])}</strong></a>'
-        for post in posts[:3]
-    )
     initial_posts = render_initial_groups(posts)
 
     return "".join(
         [
             render_page_head("笔记", "全文搜索、标签过滤和时间归档。"),
             '<main class="home-shell">',
-            '<section class="index-hero">',
-            '<div class="hero-copy">',
-            '<p class="eyebrow">Notebook Index</p>',
-            "<h1>把散落的想法，重新翻出来。</h1>",
-            "<p>现在首页支持全文搜索、标签过滤、月份归档和结果排序。写下关键词，笔记会像抽屉一样自己打开。</p>",
+            '<section class="index-strip" aria-label="笔记索引概览">',
+            '<div><p class="eyebrow">Notebook Index</p><h1>笔记</h1><p>搜索在上方，归类在左侧，结果在这里直接展开。</p></div>',
+            '<div class="index-metrics">',
+            f'<span class="index-metric">{len(posts)} 篇公开笔记</span>',
+            f'<span class="index-metric">{tag_count} 个标签</span>',
+            f'<span class="index-metric">{month_count} 个月份</span>',
+            f'<span class="index-metric">最近 {esc(latest_date)}</span>',
             "</div>",
-            '<aside class="hero-card" aria-label="笔记概览">',
-            '<p class="hero-card-title">Library Pulse</p>',
-            '<div class="stat-grid">',
-            f'<div class="stat"><strong id="totalPosts">{len(posts)}</strong><span>公开笔记</span></div>',
-            f'<div class="stat"><strong id="totalTags">{tag_count}</strong><span>标签</span></div>',
-            f'<div class="stat"><strong id="totalMonths">{month_count}</strong><span>月份归档</span></div>',
-            f'<div class="stat"><strong id="latestDate">{esc(latest_date)}</strong><span>最近更新</span></div>',
-            "</div>",
-            f'<div class="latest-list" id="latestList">{initial_latest}</div>',
-            "</aside>",
             "</section>",
-            '<section class="search-card" role="search" aria-label="搜索笔记">',
-            '<label class="sr-only" for="searchInput">全文搜索</label>',
-            '<div class="search-row">',
-            '<div class="search-input-wrap"><input id="searchInput" type="search" placeholder="搜索标题、正文、摘要或标签..." autocomplete="off"></div>',
-            '<label class="sr-only" for="sortSelect">排序</label>',
-            '<select id="sortSelect" aria-label="排序"><option value="new">最新优先</option><option value="old">最早优先</option><option value="title">标题排序</option></select>',
-            '<button class="clear-btn" id="clearFilters" type="button">清除</button>',
-            "</div>",
+            '<section class="index-toolbar" aria-label="结果工具栏">',
             '<div class="search-meta"><span id="resultCount" aria-live="polite">显示 '
             + str(len(posts))
             + " / "
             + str(len(posts))
-            + ' 篇</span><span class="shortcut">按 <kbd>/</kbd> 聚焦搜索，筛选状态会同步到地址栏</span></div>',
+            + ' 篇</span><span class="shortcut">按 <kbd>/</kbd> 聚焦导航栏搜索，筛选状态会同步到地址栏</span></div>',
+            '<div class="index-toolbar-controls">',
+            '<label class="sr-only" for="sortSelect">排序</label>',
+            '<select id="sortSelect" aria-label="排序"><option value="new">最新优先</option><option value="old">最早优先</option><option value="title">标题排序</option></select>',
+            '<button class="clear-btn" id="clearFilters" type="button">清除</button>',
+            "</div>",
             "</section>",
             '<section class="content-grid">',
             '<aside class="sidebar" aria-label="筛选器">',
