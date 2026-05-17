@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="远程触发 VPS 脚本的三种方案：SSH 远程执行、API 服务接口（推荐）、消息队列异步解耦。">
-<title>从远程机主动触发 VPS 脚本的几种方案 · Wandering Notes</title>
+<meta name="description" content="大的免费代理池构建工具">
+<title>推荐一些免费代理 · Wandering Notes</title>
 <style>
 
 :root {
@@ -731,29 +731,29 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>从远程机主动触发 VPS 脚本的几种方案</h1><time class="date" datetime="2026-05-04">2026-05-04</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF">#技术</a><a class="tag" href="/posts?tag=%E8%BF%90%E7%BB%B4">#运维</a><a class="tag" href="/posts?tag=VPS">#VPS</a><a class="tag" href="/posts?tag=API">#API</a><a class="tag" href="/posts?tag=Python">#Python</a></div></div><article class="article"><p>要实现从远程机命令行主动触发VPS上的脚本，并将解析结果获取到本地机进行后续操作，可采用以下方案：</p>
-<p><strong>方案一：基于SSH远程执行与结果回传（轻量直接，基于paramiko）</strong></p>
-<ol>
-<li><strong>脚本改造</strong>：在VPS的Python脚本中，将RSS解析结果序列化为JSON格式，直接打印到标准输出，或保存为VPS上的本地文件。</li>
-<li><strong>远程触发</strong>：在远程机上通过命令行使用SSH，或编写Python脚本利用<code>paramiko</code>库建立SSH连接，向VPS发送执行命令（如 <code>python rss_parser.py</code>）。</li>
-<li><strong>结果获取</strong>：<ul>
-<li><strong>标准输出捕获</strong>：若结果打印至stdout，远程机可直接捕获SSH命令的返回结果，然后通过管道或脚本将其保存到本地机。</li>
-<li><strong>SFTP拉取</strong>：若结果保存为文件，远程机触发执行后，再利用<code>paramiko</code>的SFTP模块将VPS上的结果文件下载至本地机，进入下一步操作。</li>
+<main class="post-wrap"><div class="post-hero"><h1>推荐一些免费代理</h1><time class="date" datetime="2026-05-17">2026-05-17</time><div class="tags"><a class="tag" href="/posts?tag=%E5%85%8D%E8%B4%B9%E4%BB%A3%E7%90%86">#免费代理</a></div></div><article class="article"><h2>一个强大的免费代理池构建工具，通过爬取多个平台/网页的代理资源，自动验证、聚合并转换为各种客户端所需格式。</h2>
+<h3>✨ 核心特性</h3>
+<ul>
+<li><strong>🕷️ 多源爬取</strong> - Telegram、GitHub、Google、Yandex、Twitter 等</li>
+<li><strong>🔍 智能验证</strong> - 自动检测代理活性和质量</li>
+<li><strong>🔄 格式转换</strong> - 支持 Clash、V2Ray、SingBox 等格式</li>
+<li><strong>💾 灵活存储</strong> - GitHub Gist、PasteGG、Imperial 等多种后端</li>
+<li><strong>🔌 插件系统</strong> - 可扩展的自定义爬取架构</li>
+<li><strong>⚡ 高效处理</strong> - 多线程并发，批量处理
+https://github.com/wzdnzd/aggregator</li>
 </ul>
-</li>
-</ol>
-<p><strong>方案二：基于API服务接口（推荐，触发与获取一步到位）</strong></p>
+<p>https://ip.net.coffee/claude/<br />
+这个网站不错，Claude AI IP 风险监测，还有 Claude Code 域名分流规则大全，这个分流规则也可以弄成 Skill 来学习和配置 AI 相关代理环境，挺有用。</p>
+<p>让 AI 根据这些内容帮你配置代理文件。我使用 Surge CLI 配置后，跑到 92 分。</p>
+<p>相关链接：</p>
 <ol>
-<li><strong>服务部署</strong>：在VPS上使用Flask或FastAPI将RSS解析脚本封装为Web API服务。设置一个路由（如 <code>/get_rss</code>），当收到请求时执行解析逻辑，并直接在HTTP Response中返回JSON格式的结果数据。</li>
-<li><strong>远程触发与获取</strong>：在远程机或本地机的命令行中，使用<code>curl</code>命令（如 <code>curl http://&lt;VPS_IP&gt;:&lt;Port&gt;/get_rss</code>）或Python的<code>requests</code>库向VPS发送请求。一次请求即可同时完成“主动触发运行”与“获取结果”，将返回的JSON数据落盘至本地机即可进行下一步操作。</li>
+<li><a href="https://t.me/isaiahsystem/1514">Surge CLI</a></li>
+<li><a href="https://ip.net.coffee/claude/site.html">Claude Code 域名分流规则大全</a></li>
 </ol>
-<p><strong>方案三：基于消息队列的异步解耦（适用于耗时长或高频场景）</strong></p>
-<ol>
-<li><strong>环境搭建</strong>：在VPS与本地机均可访问的服务器上部署消息中间件（如Redis或RabbitMQ）。</li>
-<li><strong>触发与监听</strong>：VPS上的脚本作为消费者监听指定队列；远程机通过命令行向该队列推送一条“启动”指令。</li>
-<li><strong>结果获取</strong>：VPS脚本执行完毕后，将解析结果推送到“结果队列”，本地机持续监听该队列，获取到结果后自动进入下一步数据处理流程。</li>
-</ol>
-<p>来源：质谱AI搜索</p>
+<h2>美国ATT 家宽独享ip</h2>
+<p>节点已经架设 双专线 和沪日 三种线路
+家宽TK专用官网：<a href="https://web1.rstar.cloud/">https://web1.rstar.cloud</a><br />
+备用：<a href="https://web3.rstar.cloud/">https://web3.rstar.cloud</a></p>
 </article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
 </body>
 </html>
