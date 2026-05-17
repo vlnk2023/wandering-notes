@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -731,7 +772,7 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>在 Windows 11 的 WSL2 中部署 LibreTranslate</h1><time class="date" datetime="2026-05-06">2026-05-06</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF">#技术</a><a class="tag" href="/posts?tag=%E5%B7%A5%E5%85%B7">#工具</a><a class="tag" href="/posts?tag=%E7%BF%BB%E8%AF%91">#翻译</a><a class="tag" href="/posts?tag=WSL2">#WSL2</a><a class="tag" href="/posts?tag=Docker">#Docker</a></div></div><article class="article"><p>在 Windows 11 的 WSL2 中部署 LibreTranslate，最推荐的方式是结合 <strong>Docker Desktop</strong>。这样你可以利用 WSL2 的 Linux 内核性能，同时通过 Windows 界面方便地管理资源。</p>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a></div></nav><div class="post-hero"><h1>在 Windows 11 的 WSL2 中部署 LibreTranslate</h1><time class="date" datetime="2026-05-06">2026-05-06</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF">#技术</a><a class="tag" href="/posts?tag=%E5%B7%A5%E5%85%B7">#工具</a><a class="tag" href="/posts?tag=%E7%BF%BB%E8%AF%91">#翻译</a><a class="tag" href="/posts?tag=WSL2">#WSL2</a><a class="tag" href="/posts?tag=Docker">#Docker</a></div></div><article class="article"><p>在 Windows 11 的 WSL2 中部署 LibreTranslate，最推荐的方式是结合 <strong>Docker Desktop</strong>。这样你可以利用 WSL2 的 Linux 内核性能，同时通过 Windows 界面方便地管理资源。</p>
 <p>以下是具体的部署步骤：</p>
 <h2>1. 环境准备 (Windows 端)</h2>
 <ul>
@@ -758,6 +799,6 @@ mark {
 <li><strong>项目设置</strong>: 创建目录并新建 <code>docker-compose.yml</code> 文件。建议使用 <code>volumes</code> 将语言模型持久化，以避免每次重启容器都重新下载。</li>
 <li><strong>启动服务</strong>: 使用 <code>docker compose up -d</code> 在后台运行。</li>
 </ol>
-</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
+</article><footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer></main>
 </body>
 </html>

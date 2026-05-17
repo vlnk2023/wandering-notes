@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;

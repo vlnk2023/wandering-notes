@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -731,7 +772,7 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>洞察力与分辨力分析</h1><time class="date" datetime="2026-05-16">2026-05-16</time><div class="tags"><a class="tag" href="/posts?tag=%E6%A1%88%E4%BE%8B">#案例</a><a class="tag" href="/posts?tag=%E5%88%86%E6%9E%90">#分析</a><a class="tag" href="/posts?tag=%E6%A8%A1%E6%8B%9F">#模拟</a></div></div><article class="article"><h2>正文</h2>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a></div></nav><div class="post-hero"><h1>洞察力与分辨力分析</h1><time class="date" datetime="2026-05-16">2026-05-16</time><div class="tags"><a class="tag" href="/posts?tag=%E6%A1%88%E4%BE%8B">#案例</a><a class="tag" href="/posts?tag=%E5%88%86%E6%9E%90">#分析</a><a class="tag" href="/posts?tag=%E6%A8%A1%E6%8B%9F">#模拟</a></div></div><article class="article"><h2>正文</h2>
 <p>以「洞察力与分辨力分析 + 人生场景模拟」作为在线服务产品的可行性分析
 这个方向是合理且具有市场潜力的，但需要清晰定位和差异化设计。以下从多个维度分析：</p>
 <p>✅ 合理性支撑</p>
@@ -784,6 +825,6 @@ text</li>
 反馈足够具体可操作（不只是打分，而是给出行动建议）
 定位清晰：是「认知能力训练工具」，不是心理咨询替代品
 如果你正在规划这个产品，我可以进一步帮你设计场景题库框架、用户旅程或差异化定位策略，需要吗？</p>
-</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
+</article><footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer></main>
 </body>
 </html>

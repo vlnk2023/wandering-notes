@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -731,7 +772,7 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>常用新闻信源与工具搜集</h1><time class="date" datetime="2026-05-05">2026-05-05</time><div class="tags"><a class="tag" href="/posts?tag=%E8%B5%84%E6%BA%90">#资源</a><a class="tag" href="/posts?tag=%E6%83%85%E6%8A%A5">#情报</a><a class="tag" href="/posts?tag=%E6%96%B0%E9%97%BB">#新闻</a><a class="tag" href="/posts?tag=Telegram">#Telegram</a></div></div><article class="article"><h2>常用新闻信源搜集</h2>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a></div></nav><div class="post-hero"><h1>常用新闻信源与工具搜集</h1><time class="date" datetime="2026-05-05">2026-05-05</time><div class="tags"><a class="tag" href="/posts?tag=%E8%B5%84%E6%BA%90">#资源</a><a class="tag" href="/posts?tag=%E6%83%85%E6%8A%A5">#情报</a><a class="tag" href="/posts?tag=%E6%96%B0%E9%97%BB">#新闻</a><a class="tag" href="/posts?tag=Telegram">#Telegram</a></div></div><article class="article"><h2>常用新闻信源搜集</h2>
 <p>https://t.me/xhsyp<br />
 https://t.me/wxbyg/
 https://t.me/tnews365
@@ -777,6 +818,6 @@ https://jandan.net/treehole</p>
 https://www.reddit.com/r/Affiliatemarketing/</p>
 <p>https://partnerkin.com/zh/blog/articles/Best-Affiliate-Marketing-Forum  这个内容很重要</p>
 <p>来源: https://partnerkin.com/zh/blog/articles/how-to-make-money-from-telegram-channel</p>
-</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
+</article><footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer></main>
 </body>
 </html>

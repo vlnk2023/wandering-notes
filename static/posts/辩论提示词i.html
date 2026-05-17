@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -731,8 +772,8 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>辩论提示词i</h1><time class="date" datetime="2026-05-16">2026-05-16</time><div class="tags"><a class="tag" href="/posts?tag=%E8%BE%A9%E8%AE%BA">#辩论</a><a class="tag" href="/posts?tag=%E6%8F%90%E7%A4%BA%E8%AF%8D">#提示词</a><a class="tag" href="/posts?tag=AI">#AI</a></div></div><article class="article"><h2>正文</h2>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a></div></nav><div class="post-hero"><h1>辩论提示词i</h1><time class="date" datetime="2026-05-16">2026-05-16</time><div class="tags"><a class="tag" href="/posts?tag=%E8%BE%A9%E8%AE%BA">#辩论</a><a class="tag" href="/posts?tag=%E6%8F%90%E7%A4%BA%E8%AF%8D">#提示词</a><a class="tag" href="/posts?tag=AI">#AI</a></div></div><article class="article"><h2>正文</h2>
 <p>为初中生设计一个为期8周的辩论和公众演讲课程。每节课都聚焦于学生能够产生共鸣的话题（例如，课堂是否允许使用手机，社交媒体是否弊大于利，是否接受AI生成的作业）。每节课应包含讨论框架、苏格拉底式问题（至少5个问题）、辩论活动、同伴反馈和教师指南。把完整的教案给我，随时可用。</p>
-</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
+</article><footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer></main>
 </body>
 </html>

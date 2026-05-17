@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -731,7 +772,7 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>推荐一些免费代理</h1><time class="date" datetime="2026-05-17">2026-05-17</time><div class="tags"><a class="tag" href="/posts?tag=%E5%85%8D%E8%B4%B9%E4%BB%A3%E7%90%86">#免费代理</a></div></div><article class="article"><h2>一个强大的免费代理池构建工具，通过爬取多个平台/网页的代理资源，自动验证、聚合并转换为各种客户端所需格式。</h2>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a></div></nav><div class="post-hero"><h1>推荐一些免费代理</h1><time class="date" datetime="2026-05-17">2026-05-17</time><div class="tags"><a class="tag" href="/posts?tag=%E5%85%8D%E8%B4%B9%E4%BB%A3%E7%90%86">#免费代理</a></div></div><article class="article"><h2>一个强大的免费代理池构建工具，通过爬取多个平台/网页的代理资源，自动验证、聚合并转换为各种客户端所需格式。</h2>
 <h3>✨ 核心特性</h3>
 <ul>
 <li><strong>🕷️ 多源爬取</strong> - Telegram、GitHub、Google、Yandex、Twitter 等</li>
@@ -754,6 +795,6 @@ https://github.com/wzdnzd/aggregator</li>
 <p>节点已经架设 双专线 和沪日 三种线路
 家宽TK专用官网：<a href="https://web1.rstar.cloud/">https://web1.rstar.cloud</a><br />
 备用：<a href="https://web3.rstar.cloud/">https://web3.rstar.cloud</a></p>
-</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
+</article><footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer></main>
 </body>
 </html>

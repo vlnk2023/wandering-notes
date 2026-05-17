@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -731,7 +772,7 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>人生引擎</h1><time class="date" datetime="2026-05-16">2026-05-16</time><div class="tags"><a class="tag" href="/posts?tag=%E6%A1%88%E4%BE%8B">#案例</a><a class="tag" href="/posts?tag=%E5%88%86%E6%9E%90">#分析</a><a class="tag" href="/posts?tag=%E5%BC%95%E6%93%8E">#引擎</a></div></div><article class="article"><h2>正文</h2>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a></div></nav><div class="post-hero"><h1>人生引擎</h1><time class="date" datetime="2026-05-16">2026-05-16</time><div class="tags"><a class="tag" href="/posts?tag=%E6%A1%88%E4%BE%8B">#案例</a><a class="tag" href="/posts?tag=%E5%88%86%E6%9E%90">#分析</a><a class="tag" href="/posts?tag=%E5%BC%95%E6%93%8E">#引擎</a></div></div><article class="article"><h2>正文</h2>
 <p>想要：</p>
 <p>用户描述他们的困境/情况
 AI 搜索类似的历史案例（来自我们讨论过的书籍/真实历史故事）
@@ -1834,6 +1875,6 @@ AI的角色	替代你写	替你跑80%的耦合计算
 最终输出一个感觉像是“为你量身定制”的单一连贯叙事
 现在让我设计提示词工程。关键在于提示词不应该是线性的（1→2→3→4→5），而应该是迭代和自我修正的。每个提示词的输出都成为下一个提示词的输入，并且存在一个“耦合器”提示词，它接收所有五个输出并生成最终的连贯结果。</p>
 <p>对于知识库设计，我需要案例按情境 + 人格维度进行标记，笔记按情境 + 博弈阶段进行标记，话术按人格 + 温度等级进行标记。</p>
-</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
+</article><footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer></main>
 </body>
 </html>

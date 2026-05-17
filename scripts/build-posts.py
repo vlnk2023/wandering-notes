@@ -295,6 +295,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -311,7 +353,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -1179,6 +1220,12 @@ def render_post_html(title: str, date_str: str, tags: list[str], body_html: str,
         [
             render_page_head(title, summary or SITE_SUBTITLE),
             '<main class="post-wrap">',
+            '<nav class="post-actions" aria-label="文章导航">',
+            '<div class="post-action-group">',
+            '<button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = \'/posts\'; }">← 返回上一页</button>',
+            '<a class="post-action secondary" href="/posts">返回首页</a>',
+            "</div>",
+            "</nav>",
             '<div class="post-hero">',
             f"<h1>{esc(title)}</h1>",
             f'<time class="date" datetime="{esc(date_str)}">{esc(date_str)}</time>' if date_str else "",
@@ -1187,7 +1234,7 @@ def render_post_html(title: str, date_str: str, tags: list[str], body_html: str,
             '<article class="article">',
             body_html,
             "</article>",
-            '<footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer>',
+            '<footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = \'/posts\'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer>',
             "</main>",
             PAGE_TAIL,
         ]

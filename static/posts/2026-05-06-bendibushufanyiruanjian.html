@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -731,7 +772,7 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>TranslateGemma是专门的本地部署翻译模型</h1><time class="date" datetime="2026-05-06">2026-05-06</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0">#技术笔记</a></div></div><article class="article"><h2>Ollama + TranslateGemma (12B 或 4B)（2026 年质量最佳平衡）</h2>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a></div></nav><div class="post-hero"><h1>TranslateGemma是专门的本地部署翻译模型</h1><time class="date" datetime="2026-05-06">2026-05-06</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0">#技术笔记</a></div></div><article class="article"><h2>Ollama + TranslateGemma (12B 或 4B)（2026 年质量最佳平衡）</h2>
 <p>为什么推荐：Google 2026 年发布的 TranslateGemma（基于 Gemma 3，有 4B/12B/27B 版本）是专门的翻译模型，在 WMT 等基准上表现优秀，尤其适合新闻语气、自然度、上下文理解（比传统 MT 更像 human journalist）。支持 55 种语言，覆盖大多数 TG 频道。
 优点：输出更自然、可通过 Prompt 控制风格（“professional news English, keep facts and tone”）、结构化输出（JSON）、易用。
 缺点：比 CTranslate2 稍慢（但 800 条仍极快）。
@@ -744,6 +785,6 @@ Return only valid JSON: {&quot;title&quot;: &quot;...&quot;, &quot;summary&quot;
 <p>Text: {combined_text}
 用 asyncio + Ollama Python 库并发调用（4-8 个并发视硬件）。
 12B 在消费级 GPU（RTX 3060+）或 Mac Metal 上运行良好，4B 可纯 CPU。</p>
-</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
+</article><footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer></main>
 </body>
 </html>

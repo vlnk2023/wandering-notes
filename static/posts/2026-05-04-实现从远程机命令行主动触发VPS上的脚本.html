@@ -272,6 +272,48 @@ button,input,select { font:inherit }
   border:1px solid var(--line);
   border-radius:var(--radius-md);
 }
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
 .footer {
   max-width:760px;
   margin:0 auto 54px;
@@ -288,7 +330,6 @@ button,input,select { font:inherit }
   font-weight:800;
   text-decoration:none;
 }
-.back::before { content:"←"; margin-right:6px }
 .back:hover { color:var(--accent); text-decoration:none }
 .index-hero {
   padding:58px 0 24px;
@@ -731,7 +772,7 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><div class="post-hero"><h1>从远程机主动触发 VPS 脚本的几种方案</h1><time class="date" datetime="2026-05-04">2026-05-04</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF">#技术</a><a class="tag" href="/posts?tag=%E8%BF%90%E7%BB%B4">#运维</a><a class="tag" href="/posts?tag=VPS">#VPS</a><a class="tag" href="/posts?tag=API">#API</a><a class="tag" href="/posts?tag=Python">#Python</a></div></div><article class="article"><p>要实现从远程机命令行主动触发VPS上的脚本，并将解析结果获取到本地机进行后续操作，可采用以下方案：</p>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a></div></nav><div class="post-hero"><h1>从远程机主动触发 VPS 脚本的几种方案</h1><time class="date" datetime="2026-05-04">2026-05-04</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF">#技术</a><a class="tag" href="/posts?tag=%E8%BF%90%E7%BB%B4">#运维</a><a class="tag" href="/posts?tag=VPS">#VPS</a><a class="tag" href="/posts?tag=API">#API</a><a class="tag" href="/posts?tag=Python">#Python</a></div></div><article class="article"><p>要实现从远程机命令行主动触发VPS上的脚本，并将解析结果获取到本地机进行后续操作，可采用以下方案：</p>
 <p><strong>方案一：基于SSH远程执行与结果回传（轻量直接，基于paramiko）</strong></p>
 <ol>
 <li><strong>脚本改造</strong>：在VPS的Python脚本中，将RSS解析结果序列化为JSON格式，直接打印到标准输出，或保存为VPS上的本地文件。</li>
@@ -754,6 +795,6 @@ mark {
 <li><strong>结果获取</strong>：VPS脚本执行完毕后，将解析结果推送到“结果队列”，本地机持续监听该队列，获取到结果后自动进入下一步数据处理流程。</li>
 </ol>
 <p>来源：质谱AI搜索</p>
-</article><footer class="footer"><a class="back" href="/posts">返回笔记列表</a></footer></main>
+</article><footer class="footer"><button class="back post-action secondary" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="back post-action" href="/posts">返回首页</a></footer></main>
 </body>
 </html>
