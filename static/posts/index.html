@@ -361,318 +361,40 @@ button,input,select { font:inherit }
   color:var(--ink);
   background:#fffaf1;
 }
-.index-strip {
-  padding:28px 0 16px;
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:18px;
-}
-.index-strip h1 {
-  margin:0;
-  font-size:clamp(28px, 5vw, 48px);
-  line-height:1;
-  letter-spacing:-.05em;
-  font-weight:950;
-}
-.index-strip p {
-  margin:8px 0 0;
-  color:var(--muted);
-  font-size:15px;
-}
-.index-metrics {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-  gap:8px;
-}
-.index-metric {
-  display:inline-flex;
-  align-items:center;
-  min-height:34px;
-  padding:0 11px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:rgba(255,253,248,.74);
-  color:var(--muted);
-  font-size:13px;
-  font-weight:800;
-}
-.index-toolbar {
-  margin:0 0 20px;
-  padding:12px 0 18px;
-  border-top:1px solid rgba(230,222,208,.72);
-  border-bottom:1px solid rgba(230,222,208,.72);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-}
-.index-toolbar .search-meta {
-  margin:0;
-}
-.index-toolbar-controls {
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.index-toolbar #sortSelect {
-  width:auto;
-  min-width:136px;
-  min-height:40px;
-  border-radius:999px;
-}
-.index-toolbar .clear-btn {
-  min-height:40px;
-  border-radius:999px;
-}
-.index-hero {
-  padding:58px 0 24px;
-  display:grid;
-  grid-template-columns:minmax(0, 1.35fr) minmax(260px, .65fr);
-  gap:24px;
-  align-items:stretch;
-}
-.hero-copy,
-.hero-card,
-.search-card,
 .side-card,
 .post-card {
   border:1px solid rgba(230,222,208,.9);
   background:rgba(255,253,248,.86);
   box-shadow:var(--shadow-soft);
 }
-.hero-copy {
-  position:relative;
-  overflow:hidden;
-  border-radius:calc(var(--radius) + 8px);
-  padding:38px;
-}
-.hero-copy::after {
-  content:"";
-  position:absolute;
-  right:-72px;
-  bottom:-96px;
-  width:260px;
-  height:260px;
-  border-radius:40% 60% 50% 50%;
-  background:linear-gradient(135deg, rgba(14,111,109,.16), rgba(175,107,26,.18));
-  transform:rotate(-14deg);
-}
-.eyebrow {
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  margin:0 0 16px;
-  color:var(--accent-deep);
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.eyebrow::before {
-  content:"";
-  width:22px;
-  height:2px;
-  border-radius:99px;
-  background:var(--accent);
-}
-.hero-copy h1 {
-  position:relative;
-  z-index:1;
-  margin:0;
-  max-width:760px;
-  font-size:clamp(38px, 7vw, 76px);
-  line-height:1.02;
-  letter-spacing:-.065em;
-  font-weight:950;
-}
-.hero-copy p {
-  position:relative;
-  z-index:1;
-  max-width:620px;
-  margin:18px 0 0;
-  color:var(--muted);
-  font-size:18px;
-}
-.hero-card {
-  border-radius:var(--radius);
-  padding:24px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  background:
-    linear-gradient(160deg, rgba(255,253,248,.95), rgba(255,248,235,.92)),
-    radial-gradient(circle at 100% 0, rgba(14,111,109,.18), transparent 10rem);
-}
-.hero-card-title {
-  margin:0 0 16px;
-  color:var(--muted);
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.stat-grid {
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0, 1fr));
-  gap:12px;
-}
-.stat {
-  padding:14px;
-  border:1px solid var(--line-soft);
-  border-radius:var(--radius-md);
-  background:rgba(255,255,255,.45);
-}
-.stat strong {
-  display:block;
-  font-size:27px;
-  line-height:1;
-  letter-spacing:-.03em;
-}
-.stat span {
-  display:block;
-  margin-top:8px;
-  color:var(--quiet);
-  font-size:13px;
-  font-weight:700;
-}
-.latest-list {
-  margin:20px 0 0;
-  display:grid;
-  gap:10px;
-}
-.latest-item {
-  display:block;
-  padding:12px;
-  border-radius:var(--radius-sm);
-  color:var(--ink);
-  background:rgba(255,255,255,.5);
-  text-decoration:none;
-}
-.latest-item:hover { background:var(--accent-soft); text-decoration:none }
-.latest-item span {
-  display:block;
-  color:var(--quiet);
-  font-size:12px;
-}
-.latest-item strong {
-  display:block;
-  margin-top:2px;
-  font-size:14px;
-  line-height:1.45;
-}
-.search-card {
-  position:sticky;
-  top:76px;
-  z-index:50;
-  margin:0 0 24px;
-  border-radius:var(--radius);
-  padding:18px;
-}
-.search-row {
-  display:grid;
-  grid-template-columns:minmax(0, 1fr) 160px auto;
-  gap:12px;
-}
-.search-input-wrap { position:relative }
-.search-input-wrap::before {
-  content:"⌕";
-  position:absolute;
-  left:16px;
-  top:50%;
-  transform:translateY(-50%);
-  color:var(--quiet);
-  font-size:20px;
-}
-#searchInput,
-#sortSelect {
-  width:100%;
-  min-height:48px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  background:#fffaf1;
-  color:var(--ink);
-  outline:none;
-}
-#searchInput {
-  padding:0 16px 0 44px;
-}
-#sortSelect {
-  padding:0 12px;
-  cursor:pointer;
-}
-#searchInput:focus,
-#sortSelect:focus {
-  border-color:rgba(14,111,109,.55);
-  box-shadow:0 0 0 4px rgba(14,111,109,.12);
-}
-.clear-btn,
 .facet-chip,
 .filter-pill button {
   border:none;
   cursor:pointer;
 }
-.clear-btn {
-  min-height:48px;
-  padding:0 18px;
-  border-radius:15px;
-  background:var(--ink);
-  color:#fffaf1;
-  font-weight:900;
-}
-.clear-btn:hover { background:var(--accent-deep) }
-.search-meta {
-  margin-top:12px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  color:var(--quiet);
-  font-size:13px;
-}
-.shortcut { color:var(--muted) }
-kbd {
-  display:inline-flex;
-  min-width:22px;
-  min-height:22px;
-  align-items:center;
-  justify-content:center;
-  margin:0 3px;
-  border:1px solid var(--line);
-  border-bottom-width:2px;
-  border-radius:7px;
-  background:#fffaf1;
-  color:var(--ink);
-  font-family:"JetBrains Mono","Cascadia Code",monospace;
-  font-size:12px;
-}
 .content-grid {
   display:grid;
-  grid-template-columns:280px minmax(0, 1fr);
-  gap:24px;
+  grid-template-columns:220px minmax(0, 1fr);
+  gap:22px;
   align-items:start;
-  padding-bottom:64px;
+  padding:28px 0 64px;
 }
 .sidebar {
   position:sticky;
-  top:84px;
+  top:86px;
   display:grid;
   gap:16px;
 }
 .side-card {
-  border-radius:var(--radius);
-  padding:18px;
+  border-radius:18px;
+  padding:14px;
 }
 .side-card h2 {
-  margin:0 0 12px;
+  margin:0 0 10px;
+  color:var(--muted);
   font-size:15px;
+  font-weight:900;
   letter-spacing:.02em;
-}
-.chip-stack {
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
 }
 .facet-chip {
   display:inline-flex;
@@ -708,7 +430,7 @@ kbd {
 }
 .active-filters {
   min-height:31px;
-  margin:0 0 16px;
+  margin:0 0 14px;
   display:flex;
   flex-wrap:wrap;
   gap:8px;
@@ -829,17 +551,18 @@ mark {
 }
 .empty[hidden] { display:none }
 @media (max-width:900px) {
-  .index-hero,
   .content-grid {
     grid-template-columns:1fr;
+    padding-top:18px;
   }
-  .search-card,
   .sidebar {
     position:static;
   }
   .sidebar {
-    grid-template-columns:repeat(2, minmax(0, 1fr));
+    display:block;
   }
+  .archive-stack { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:thin }
+  .archive-button { width:auto; flex:0 0 auto }
 }
 @media (max-width:680px) {
   .nav { min-height:0; padding:10px 18px; gap:10px 14px; flex-wrap:wrap }
@@ -847,17 +570,10 @@ mark {
   .home-shell,
   .wrap,
   .post-wrap { padding:0 18px }
-  .index-strip { align-items:flex-start; flex-direction:column; padding-top:22px }
-  .index-metrics { justify-content:flex-start }
-  .index-toolbar { align-items:flex-start; flex-direction:column }
-  .index-toolbar-controls { width:100%; align-items:stretch }
-  .index-toolbar #sortSelect { flex:1; width:100% }
-  .index-hero { padding-top:34px }
-  .hero-copy { padding:26px }
-  .hero-copy p { font-size:16px }
-  .search-row { grid-template-columns:1fr }
-  .search-meta { align-items:flex-start; flex-direction:column }
-  .sidebar { grid-template-columns:1fr }
+  .content-grid { gap:14px; padding-top:14px }
+  .side-card { margin:0 -2px; padding:12px; border-radius:16px }
+  .side-card h2 { font-size:14px }
+  .active-filters { min-height:0 }
   .post-card { padding:18px }
   .post-title { font-size:20px }
   .article { padding:24px 18px }
@@ -880,7 +596,7 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="home-shell"><section class="index-strip" aria-label="笔记索引概览"><div><p class="eyebrow">Notebook Index</p><h1>笔记</h1><p>搜索在上方，归类在左侧，结果在这里直接展开。</p></div><div class="index-metrics"><span class="index-metric">19 篇公开笔记</span><span class="index-metric">31 个标签</span><span class="index-metric">1 个月份</span><span class="index-metric">最近 2026-05-17</span></div></section><section class="index-toolbar" aria-label="结果工具栏"><div class="search-meta"><span id="resultCount" aria-live="polite">显示 19 / 19 篇</span><span class="shortcut">按 <kbd>/</kbd> 聚焦导航栏搜索，筛选状态会同步到地址栏</span></div><div class="index-toolbar-controls"><label class="sr-only" for="sortSelect">排序</label><select id="sortSelect" aria-label="排序"><option value="new">最新优先</option><option value="old">最早优先</option><option value="title">标题排序</option></select><button class="clear-btn" id="clearFilters" type="button">清除</button></div></section><section class="content-grid"><aside class="sidebar" aria-label="筛选器"><div class="side-card"><h2>标签归类</h2><div class="chip-stack" id="tagFilters"></div></div><div class="side-card"><h2>时间归档</h2><div class="archive-stack" id="archiveFilters"></div></div></aside><div class="results-area"><div class="active-filters" id="activeFilters" aria-live="polite"></div><div id="postList">
+<main class="home-shell"><section class="content-grid"><aside class="sidebar" aria-label="时间归档"><div class="side-card"><h2>时间归档</h2><div class="archive-stack" id="archiveFilters"></div></div></aside><div class="results-area"><div class="active-filters" id="activeFilters" aria-live="polite"></div><div id="postList">
             <section class="month-section">
               <h2 class="month-title">
                 <span><a href="/posts?month=2026-05">2026年5月</a></span>
@@ -1084,18 +800,13 @@ mark {
   const els = {
     form: document.getElementById("navSearchForm"),
     search: document.getElementById("searchInput"),
-    sort: document.getElementById("sortSelect"),
-    clear: document.getElementById("clearFilters"),
-    tagFilters: document.getElementById("tagFilters"),
     archiveFilters: document.getElementById("archiveFilters"),
     activeFilters: document.getElementById("activeFilters"),
     postList: document.getElementById("postList"),
-    empty: document.getElementById("emptyState"),
-    resultCount: document.getElementById("resultCount")
+    empty: document.getElementById("emptyState")
   };
 
-  const state = { q: "", tag: "", month: "", sort: "new" };
-  const collator = new Intl.Collator("zh-CN", { numeric: true, sensitivity: "base" });
+  const state = { q: "", tag: "", month: "" };
 
   const normalize = (value) => String(value || "").toLocaleLowerCase("zh-CN").replace(/\s+/g, " ").trim();
   const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({
@@ -1125,20 +836,11 @@ mark {
     return map;
   }
 
-  function sortedEntries(map, byValue = false) {
-    return [...map.entries()].sort((a, b) => {
-      if (byValue && b[1] !== a[1]) return b[1] - a[1];
-      return collator.compare(a[0], b[0]);
-    });
-  }
-
   function readUrl() {
     const params = new URLSearchParams(location.search);
     state.q = params.get("q") || "";
     state.tag = params.get("tag") || "";
     state.month = params.get("month") || "";
-    state.sort = params.get("sort") || "new";
-    if (!["new", "old", "title"].includes(state.sort)) state.sort = "new";
   }
 
   function writeUrl(replace = false) {
@@ -1146,7 +848,6 @@ mark {
     if (state.q) params.set("q", state.q);
     if (state.tag) params.set("tag", state.tag);
     if (state.month) params.set("month", state.month);
-    if (state.sort !== "new") params.set("sort", state.sort);
     const next = `${location.pathname}${params.toString() ? `?${params}` : ""}`;
     history[replace ? "replaceState" : "pushState"]({}, "", next);
   }
@@ -1235,14 +936,7 @@ mark {
   }
 
   function renderFacets() {
-    const tagCounts = sortedEntries(countBy(posts, (post) => post.tags), true);
     const monthCounts = [...countBy(posts, (post) => post.month).entries()].sort((a, b) => b[0].localeCompare(a[0]));
-
-    els.tagFilters.innerHTML = tagCounts.map(([tag, count]) => `
-      <button class="facet-chip ${state.tag === tag ? "active" : ""}" type="button" data-tag-value="${escapeHtml(tag)}">
-        #${escapeHtml(tag)} <span>${count}</span>
-      </button>
-    `).join("");
 
     els.archiveFilters.innerHTML = monthCounts.map(([month, count]) => `
       <button class="facet-chip archive-button ${state.month === month ? "active" : ""}" type="button" data-month-value="${escapeHtml(month)}">
@@ -1276,8 +970,6 @@ mark {
 
     list.sort((a, b) => {
       if (tokens.length && b.score !== a.score) return b.score - a.score;
-      if (state.sort === "old") return a.date.localeCompare(b.date);
-      if (state.sort === "title") return collator.compare(a.title, b.title);
       return b.date.localeCompare(a.date);
     });
 
@@ -1286,13 +978,11 @@ mark {
 
   function apply(replaceUrl = false) {
     els.search.value = state.q;
-    els.sort.value = state.sort;
 
     const { list, tokens } = filteredPosts();
     renderFacets();
     renderActiveFilters();
     renderPosts(list, tokens);
-    els.resultCount.textContent = `显示 ${list.length} / ${posts.length} 篇`;
     writeUrl(replaceUrl);
   }
 
@@ -1304,28 +994,6 @@ mark {
   els.form.addEventListener("submit", (event) => {
     event.preventDefault();
     state.q = els.search.value.trim();
-    apply();
-  });
-
-  els.sort.addEventListener("change", () => {
-    state.sort = els.sort.value;
-    apply();
-  });
-
-  els.clear.addEventListener("click", () => {
-    state.q = "";
-    state.tag = "";
-    state.month = "";
-    state.sort = "new";
-    apply();
-    els.search.focus();
-  });
-
-  els.tagFilters.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-tag-value]");
-    if (!button) return;
-    const tag = button.dataset.tagValue;
-    state.tag = state.tag === tag ? "" : tag;
     apply();
   });
 
