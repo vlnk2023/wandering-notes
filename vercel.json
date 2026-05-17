@@ -3,11 +3,13 @@
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/", "destination": "/admin/index.html" },
+    { "source": "/edit", "destination": "/edit/index.html" },
+    { "source": "/edit/", "destination": "/edit/index.html" },
     { "source": "/posts", "destination": "/posts/index.html" },
     { "source": "/post/(.*)", "destination": "/posts/$1.html" }
   ],
   "redirects": [
     { "source": "/", "destination": "/posts", "permanent": true }
   ],
-  "buildCommand": null
+  "buildCommand": "python -m pip install -r requirements.txt && npm run build"
 }

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>编辑笔记 · Wandering Notes</title>
+<style>
+:root {
+  --bg:#f7f3eb;
+  --paper:#fffdf8;
+  --ink:#201b16;
+  --muted:#70675c;
+  --quiet:#9b9184;
+  --line:#e6ded0;
+  --accent:#0e6f6d;
+  --accent-deep:#094d4b;
+  --accent-soft:#dff1ec;
+  --danger:#8f2f1d;
+  --shadow:0 20px 60px rgba(79,55,28,.11);
+  --radius:22px;
+}
+*,*::before,*::after { box-sizing:border-box }
+body {
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 10% -10%, rgba(14,111,109,.12), transparent 30rem),
+    linear-gradient(180deg, #fbf6ec 0%, var(--bg) 100%);
+  font-family:"Noto Serif SC","LXGW WenKai","PingFang SC","Microsoft YaHei",serif;
+}
+a { color:var(--accent); text-decoration:none }
+a:hover { text-decoration:underline }
+button,input,textarea { font:inherit }
+.shell {
+  width:min(1080px, 100%);
+  margin:0 auto;
+  padding:24px;
+}
+.top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:18px;
+}
+.brand {
+  color:var(--ink);
+  font-weight:900;
+}
+.panel {
+  border:1px solid rgba(230,222,208,.95);
+  border-radius:var(--radius);
+  background:rgba(255,253,248,.92);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.header {
+  padding:22px;
+  border-bottom:1px solid var(--line);
+  display:grid;
+  gap:12px;
+}
+.header h1 {
+  margin:0;
+  font-size:clamp(28px, 5vw, 48px);
+  line-height:1;
+  letter-spacing:-.05em;
+}
+.meta {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  color:var(--muted);
+  font-size:14px;
+}
+.pill {
+  display:inline-flex;
+  align-items:center;
+  min-height:32px;
+  padding:0 11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fffaf1;
+}
+.toolbar {
+  padding:16px 22px;
+  border-bottom:1px solid var(--line);
+  display:grid;
+  grid-template-columns:minmax(220px, 1fr) auto auto auto;
+  gap:10px;
+  align-items:center;
+}
+.token {
+  min-height:42px;
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fffaf1;
+  padding:0 14px;
+  outline:none;
+}
+.token:focus,
+textarea:focus {
+  border-color:rgba(14,111,109,.55);
+  box-shadow:0 0 0 4px rgba(14,111,109,.12);
+}
+.btn {
+  min-height:42px;
+  border:0;
+  border-radius:999px;
+  padding:0 16px;
+  background:var(--ink);
+  color:#fffaf1;
+  cursor:pointer;
+  font-weight:900;
+}
+.btn.secondary {
+  border:1px solid var(--line);
+  background:#fffaf1;
+  color:var(--muted);
+}
+.btn:hover { background:var(--accent-deep); color:#fffaf1 }
+.btn.secondary:hover { border-color:rgba(14,111,109,.24); background:var(--accent-soft); color:var(--accent-deep) }
+.btn:disabled {
+  cursor:not-allowed;
+  opacity:.58;
+}
+textarea {
+  display:block;
+  width:100%;
+  min-height:62vh;
+  border:0;
+  outline:none;
+  resize:vertical;
+  padding:22px;
+  background:rgba(255,253,248,.58);
+  color:var(--ink);
+  font-family:"JetBrains Mono","Cascadia Code","SFMono-Regular",Consolas,monospace;
+  font-size:14px;
+  line-height:1.72;
+}
+.status {
+  min-height:46px;
+  padding:12px 22px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:14px;
+}
+.status.error { color:var(--danger) }
+.status.ok { color:var(--accent-deep) }
+.hint {
+  margin:14px 0 0;
+  color:var(--quiet);
+  font-size:13px;
+}
+@media (max-width:760px) {
+  .shell { padding:14px }
+  .top { align-items:flex-start; flex-direction:column }
+  .toolbar { grid-template-columns:1fr }
+  .btn { width:100% }
+  textarea { min-height:58vh; padding:16px; font-size:13px }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="top">
+    <a class="brand" href="/posts">Wandering Notes</a>
+    <a id="backToPost" href="/posts">返回文章</a>
+  </div>
+
+  <section class="panel">
+    <div class="header">
+      <h1>编辑笔记</h1>
+      <div class="meta">
+        <span class="pill" id="pathLabel">未选择文件</span>
+        <span class="pill">保存后会提交到 GitHub，并触发重新发布</span>
+      </div>
+      <p class="hint">可以直接修改全文，也可以把新内容追加到末尾。按 Ctrl/⌘ + S 保存。</p>
+    </div>
+
+    <div class="toolbar">
+      <input class="token" id="tokenInput" type="password" placeholder="编辑密钥" autocomplete="current-password">
+      <button class="btn secondary" id="loadBtn" type="button">加载原文</button>
+      <button class="btn secondary" id="appendBtn" type="button">追加分隔</button>
+      <button class="btn" id="saveBtn" type="button">保存并发布</button>
+    </div>
+
+    <textarea id="editor" spellcheck="false" placeholder="加载后会显示 Markdown 原文..."></textarea>
+    <div class="status" id="status">请输入编辑密钥，然后加载原文。</div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const path = params.get("path") || "";
+  const slug = params.get("slug") || "";
+  const els = {
+    pathLabel: document.getElementById("pathLabel"),
+    backToPost: document.getElementById("backToPost"),
+    token: document.getElementById("tokenInput"),
+    load: document.getElementById("loadBtn"),
+    append: document.getElementById("appendBtn"),
+    save: document.getElementById("saveBtn"),
+    editor: document.getElementById("editor"),
+    status: document.getElementById("status")
+  };
+
+  let sha = "";
+  let saving = false;
+  const tokenKey = "wanderingNotesEditorToken";
+
+  function setStatus(message, type = "") {
+    els.status.textContent = message;
+    els.status.className = `status ${type}`.trim();
+  }
+
+  function token() {
+    return els.token.value.trim();
+  }
+
+  function headers() {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token()}`
+    };
+  }
+
+  function requirePath() {
+    if (!path) {
+      setStatus("缺少 path 参数，无法定位要编辑的 Markdown 文件。", "error");
+      return false;
+    }
+    return true;
+  }
+
+  async function loadPost() {
+    if (!requirePath()) return;
+    if (!token()) {
+      setStatus("请先输入编辑密钥。", "error");
+      els.token.focus();
+      return;
+    }
+
+    localStorage.setItem(tokenKey, token());
+    els.load.disabled = true;
+    setStatus("正在加载 Markdown 原文...");
+
+    try {
+      const response = await fetch(`/api/post?path=${encodeURIComponent(path)}`, {
+        headers: { Authorization: `Bearer ${token()}` }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "加载失败");
+
+      sha = data.sha;
+      els.editor.value = data.content || "";
+      setStatus("已加载原文，可以编辑。", "ok");
+      els.editor.focus();
+    } catch (error) {
+      setStatus(error.message, "error");
+    } finally {
+      els.load.disabled = false;
+    }
+  }
+
+  async function savePost() {
+    if (!requirePath() || saving) return;
+    if (!token()) {
+      setStatus("请先输入编辑密钥。", "error");
+      els.token.focus();
+      return;
+    }
+    if (!els.editor.value.trim()) {
+      setStatus("内容不能为空。", "error");
+      return;
+    }
+
+    localStorage.setItem(tokenKey, token());
+    saving = true;
+    els.save.disabled = true;
+    setStatus("正在提交到 GitHub...");
+
+    try {
+      const response = await fetch("/api/post", {
+        method: "PUT",
+        headers: headers(),
+        body: JSON.stringify({
+          path,
+          sha,
+          content: els.editor.value,
+          message: `Update ${path}`
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "保存失败");
+
+      sha = "";
+      setStatus("已提交。等待 Vercel 重新部署后，线上文章会更新。", "ok");
+    } catch (error) {
+      setStatus(error.message, "error");
+    } finally {
+      saving = false;
+      els.save.disabled = false;
+    }
+  }
+
+  function appendDivider() {
+    const stamp = new Date().toLocaleString("zh-CN", { hour12: false });
+    const addition = `\n\n---\n\n## 追加记录 ${stamp}\n\n`;
+    const start = els.editor.selectionStart;
+    const end = els.editor.selectionEnd;
+    const before = els.editor.value.slice(0, start);
+    const after = els.editor.value.slice(end);
+    els.editor.value = `${before}${addition}${after}`;
+    const next = before.length + addition.length;
+    els.editor.focus();
+    els.editor.setSelectionRange(next, next);
+  }
+
+  els.pathLabel.textContent = path || "未选择文件";
+  if (slug) els.backToPost.href = `/post/${encodeURIComponent(slug)}`;
+
+  const storedToken = localStorage.getItem(tokenKey);
+  if (storedToken) {
+    els.token.value = storedToken;
+    loadPost();
+  }
+
+  els.load.addEventListener("click", loadPost);
+  els.save.addEventListener("click", savePost);
+  els.append.addEventListener("click", appendDivider);
+  window.addEventListener("keydown", (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+      event.preventDefault();
+      savePost();
+    }
+  });
+})();
+</script>
+</body>
+</html>

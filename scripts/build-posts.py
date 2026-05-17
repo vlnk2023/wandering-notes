@@ -935,6 +935,11 @@ def month_url(month: str) -> str:
     return "/posts?month=" + quote(str(month), safe="")
 
 
+def edit_url(source_path: str, slug: str) -> str:
+    params = f"path={quote(source_path, safe='')}&slug={quote(slug, safe='')}"
+    return "/edit?" + params
+
+
 def safe_json(data: object) -> str:
     return (
         json.dumps(data, ensure_ascii=False, separators=(",", ":"))
@@ -980,7 +985,15 @@ PAGE_TAIL = """
 """
 
 
-def render_post_html(title: str, date_str: str, tags: list[str], body_html: str, summary: str) -> str:
+def render_post_html(
+    title: str,
+    date_str: str,
+    tags: list[str],
+    body_html: str,
+    summary: str,
+    source_path: str,
+    slug: str,
+) -> str:
     tags_html = "".join(
         f'<a class="tag" href="{esc(tag_url(tag))}">#{esc(tag)}</a>' for tag in tags
     )
@@ -992,6 +1005,7 @@ def render_post_html(title: str, date_str: str, tags: list[str], body_html: str,
             '<div class="post-action-group">',
             '<button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = \'/posts\'; }">← 返回上一页</button>',
             '<a class="post-action secondary" href="/posts">返回首页</a>',
+            f'<a class="post-action secondary" href="{esc(edit_url(source_path, slug))}">编辑本文</a>',
             "</div>",
             "</nav>",
             '<div class="post-hero">',
@@ -1129,7 +1143,8 @@ def build(include_drafts: bool = False) -> None:
         post_month = month_key(date_str)
         search_text = compact_text(" ".join([title, date_str, summary, " ".join(tags), body_text])).lower()
 
-        post_html = render_post_html(title, date_str, tags, body_html, summary)
+        source_path = md_path.relative_to(ROOT).as_posix()
+        post_html = render_post_html(title, date_str, tags, body_html, summary, source_path, slug)
         (OUT_DIR / f"{slug}.html").write_text(post_html, encoding="utf-8")
         print(f"[OK] {md_path.name} -> static/posts/{slug}.html")
 
@@ -1145,6 +1160,7 @@ def build(include_drafts: bool = False) -> None:
                 "readingTime": reading_time(body_text),
                 "content": body_text,
                 "searchText": search_text,
+                "sourcePath": source_path,
             }
         )
 
