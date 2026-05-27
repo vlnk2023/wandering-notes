@@ -19,7 +19,7 @@ https://www.perplexity.ai/
 https://search.brave.com/
 https://iask.ai/
 https://www.n.cn/
-
+https://ya.ru/alice/chat/   全都是俄语高质量信息来源
 
 https://www.quark.cn/  搜索插件
 
