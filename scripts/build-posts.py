@@ -974,6 +974,7 @@ def render_page_head(title: str, description: str = SITE_SUBTITLE) -> str:
       </div>
     </form>
     <a class="active" href="/posts">笔记</a>
+    <a href="/cognitive-map">认知地图</a>
   </nav>
 </header>
 """

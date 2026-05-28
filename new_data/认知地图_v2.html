@@ -323,6 +323,21 @@
             font-size: 13px;
             font-weight: 500;
         }
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #4d6350;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color 160ms ease;
+        }
+        .nav-link:hover {
+            color: #1f2937;
+        }
+        .nav-link .material-symbols-outlined {
+            font-size: 18px;
+        }
         .muted {
             color: #9ca3af;
         }
@@ -578,6 +593,12 @@
                 gap: 10px;
                 font-size: 12px;
             }
+            .nav-link span:last-child {
+                display: none;
+            }
+            .nav-link .material-symbols-outlined {
+                font-size: 22px;
+            }
             .icon-button {
                 width: 32px;
                 height: 32px;
@@ -748,6 +769,10 @@
 <span>RelateMap</span>
 </div>
 <div class="nav-actions">
+<a class="nav-link" href="/posts" aria-label="返回首页">
+<span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+<span>返回首页</span>
+</a>
 <div>EN / <span class="muted">中</span></div>
 <button class="icon-button" type="button" aria-label="Account"><span class="material-symbols-outlined">account_circle</span></button>
 <button class="icon-button" type="button" aria-label="Settings"><span class="material-symbols-outlined">settings</span></button>
