@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Your Cognitive River - RelateMap</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 80% 16%, rgba(212, 166, 122, 0.12), transparent 9%),
+                radial-gradient(circle at 14% 18%, rgba(212, 166, 122, 0.1), transparent 8%),
+                linear-gradient(180deg, #fbf7ef 0%, #f7f1e7 100%);
+            margin: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: calc(var(--controls-top) + clamp(520px, 48vw, 640px));
+            isolation: isolate;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.32;
+            background-image:
+                linear-gradient(110deg, transparent 0%, rgba(92, 116, 85, 0.035) 48%, transparent 58%),
+                radial-gradient(rgba(94, 74, 48, 0.08) 0.6px, transparent 0.8px);
+            background-size: 100% 100%, 12px 12px;
+        }
+        :root {
+            --map-top: 176px;
+            --map-max-width: 1180px;
+            --map-side-padding: clamp(28px, 11vw, 160px);
+            --stage-width: min(
+                var(--map-max-width),
+                calc(100vw - var(--map-side-padding))
+            );
+            --map-height: calc(var(--stage-width) * 1086 / 1448);
+            --controls-top: calc(var(--map-top) + var(--map-height) + clamp(16px, 2vw, 28px));
+            --content-width: min(78rem, calc(100vw - clamp(32px, 7vw, 96px)));
+            --summary-gap: clamp(14px, 1.6vw, 22px);
+            --timeline-progress: 85%;
+        }
+        .map-stage-layer {
+            position: absolute;
+            top: var(--map-top);
+            left: 50%;
+            width: var(--stage-width);
+            aspect-ratio: 1448 / 1086;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .bg-river {
+            z-index: 1;
+            background-image: url('./figma-assets/image-9-1.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .topographic-lines {
+            z-index: 2;
+            opacity: 0.22;
+        }
+        .connector-layer {
+            z-index: 3;
+        }
+        .connector-layer path {
+            fill: none;
+            stroke-linecap: round;
+            stroke-width: 2.2;
+            stroke-dasharray: 4 7;
+            opacity: 0.92;
+        }
+        .connector-layer circle {
+            fill: #fbf7ef;
+            stroke-width: 3;
+            opacity: 1;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.68);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(218, 202, 176, 0.58);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .node-card {
+            position: absolute;
+            top: var(--card-y);
+            left: var(--card-x);
+            width: var(--card-width);
+            padding: 14px;
+            border-radius: 12px;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+        }
+        .node-card:hover,
+        .node-card:focus-visible {
+            transform: translateY(-2px);
+            outline: none;
+            border-color: color-mix(in srgb, var(--accent-color) 46%, rgba(218, 202, 176, 0.58));
+        }
+        .node-card.is-active {
+            border-color: color-mix(in srgb, var(--accent-color) 68%, white);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 14%, transparent), 0 8px 26px rgba(0, 0, 0, 0.08);
+        }
+        .node-card__row {
+            display: flex;
+            gap: 10px;
+        }
+        .node-card__badge {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            flex: 0 0 16px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            color: #fff;
+            background: var(--accent-color);
+            font-size: 9px;
+            line-height: 1;
+            font-weight: 700;
+        }
+        .node-card__body {
+            min-width: 0;
+        }
+        .node-card__title {
+            margin: 0 0 6px;
+            color: #1f2937;
+            font-size: 13px;
+            line-height: 1.2;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .node-card__icon {
+            color: var(--accent-color);
+            font-size: 16px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .node-card__description {
+            margin: 0;
+            color: #4b5563;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .timeline-line {
+            width: 100%;
+            height: 2px;
+            background: #d4cfc1;
+            position: relative;
+        }
+        .timeline-progress {
+            width: var(--timeline-progress);
+            height: 2px;
+            background: #4d6350;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .timeline-markers {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5%;
+            transform: translateY(-50%);
+        }
+        .timeline-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .timeline-marker__dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            border: 1px solid #fff;
+            background: var(--accent-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+        .timeline-marker__dot.is-current {
+            border-width: 2px;
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-color) 10%, transparent), 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+        .timeline-marker__label {
+            margin-top: 4px;
+            color: var(--accent-color);
+            font-size: 9px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .summary-grid {
+            width: 100%;
+            max-width: var(--content-width);
+            margin: 8px auto 0;
+            padding: 0 8px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+            gap: 14px;
+        }
+        .metric-card {
+            min-height: auto;
+            padding: 14px 16px;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: 36px minmax(0, 1fr);
+            column-gap: 14px;
+            align-items: start;
+        }
+        .metric-card__icon {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--accent-color);
+            background: color-mix(in srgb, var(--accent-color) 10%, white);
+        }
+        .metric-card__icon .material-symbols-outlined {
+            font-size: 20px;
+        }
+        .metric-card__header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .metric-card__category {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            background: color-mix(in srgb, var(--accent-color) 12%, white);
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+        .metric-card__body {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .metric-card__title {
+            margin: 0;
+            color: #1f2937;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .metric-card__value {
+            margin: 2px 0 0;
+            color: var(--accent-color);
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.1;
+            font-family: 'Noto Serif SC', serif;
+            word-break: keep-all;
+        }
+        .metric-card__copy {
+            margin: 1px 0 0;
+            color: #6d7a6e;
+            font-size: 11px;
+            line-height: 1.35;
+            overflow: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        main {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 20;
+        }
+        .floating-layer {
+            z-index: 30;
+        }
+        .app-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 50;
+        }
+        .brand,
+        .nav-actions,
+        .timeline-date,
+        .cta-button {
+            display: flex;
+            align-items: center;
+        }
+        .brand {
+            gap: 8px;
+            color: #4d6350;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .brand-mark {
+            width: 28px;
+            height: 28px;
+        }
+        .nav-actions {
+            gap: 32px;
+            color: #4b5563;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .muted {
+            color: #9ca3af;
+        }
+        .icon-button,
+        .timeline-play {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            transition: background-color 160ms ease, color 160ms ease;
+        }
+        .icon-button {
+            border: 1px solid rgba(216, 203, 184, 0.7);
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .icon-button .material-symbols-outlined {
+            font-size: 22px;
+        }
+        .icon-button:hover,
+        .timeline-play:hover {
+            color: #111827;
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .hero {
+            padding-top: 80px;
+            text-align: center;
+        }
+        .hero-title {
+            margin: 0;
+            color: #2c3e30;
+            font-size: 64px;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 400;
+            line-height: 1.25;
+        }
+        .hero-subtitle {
+            margin: 4px 0 0;
+            color: #4d6350;
+            font-size: 24px;
+            font-family: 'Noto Serif SC', serif;
+        }
+        .hero-divider {
+            display: flex;
+            justify-content: center;
+            margin: 16px 0;
+            color: #9ca3af;
+            opacity: 0.4;
+        }
+        .hero-copy {
+            max-width: 672px;
+            margin: 0 auto;
+            color: #6d7a6e;
+            font-size: 14px;
+            font-weight: 300;
+        }
+        .hero-copy span {
+            display: block;
+            margin-top: 4px;
+        }
+        .status-banner {
+            position: absolute;
+            top: calc(var(--controls-top) - 92px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(78rem, calc(100vw - clamp(32px, 7vw, 96px)));
+            padding: 16px 28px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            z-index: 35;
+        }
+        .status-banner__content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .status-banner__label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #9ca3af;
+        }
+        .status-banner__stage {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e30;
+        }
+        .status-banner__desc {
+            font-size: 14px;
+            color: #6d7a6e;
+        }
+
+        .controls {
+            position: absolute;
+            top: var(--controls-top);
+            left: 0;
+            width: 100%;
+            padding: 0 clamp(16px, 4vw, 48px) clamp(8px, 1.5vw, 16px);
+            z-index: 40;
+        }
+        .controls > * + * {
+            margin-top: clamp(22px, 3vw, 32px);
+        }
+        .controls-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+        .timeline-panel {
+            width: 100%;
+            max-width: min(var(--content-width), calc(var(--stage-width) * 0.82));
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-radius: 999px;
+        }
+        .timeline-title {
+            display: flex;
+            flex-shrink: 0;
+            flex-direction: column;
+        }
+        .timeline-title span:first-child {
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .timeline-title span:last-child {
+            margin-top: 2px;
+            color: #9ca3af;
+            font-size: 9px;
+        }
+        .timeline-play {
+            flex-shrink: 0;
+            color: #4d6350;
+            border: 1px solid #fff;
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .timeline-play .material-symbols-outlined {
+            font-size: 20px;
+        }
+        .timeline-track {
+            position: relative;
+            display: flex;
+            flex: 1;
+            min-width: 220px;
+            align-items: center;
+        }
+        .timeline-date {
+            gap: 8px;
+            color: #6b7280;
+            font-size: 11px;
+            white-space: nowrap;
+            margin-left: 24px;
+        }
+        .timeline-date .material-symbols-outlined,
+        .cta-button .material-symbols-outlined {
+            font-size: 18px;
+        }
+        .cta-button {
+            gap: 12px;
+            padding: clamp(11px, 1.2vw, 18px) clamp(34px, 4vw, 48px);
+            color: #fff;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #5b715e 0%, #3e4f41 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 14px;
+            font-weight: 500;
+            transition: transform 120ms ease;
+        }
+        .cta-button:active {
+            transform: scale(0.95);
+        }
+        .action-panel {
+            width: 100%;
+            max-width: min(var(--content-width), calc(var(--stage-width) * 0.82));
+            padding: clamp(18px, 2vw, 24px);
+            border-radius: 18px;
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: clamp(18px, 2.4vw, 28px);
+            align-items: start;
+        }
+        .action-panel__eyebrow {
+            margin: 0 0 8px;
+            color: var(--accent-color);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .action-panel__title {
+            margin: 0;
+            color: #1f2937;
+            font-size: clamp(20px, 2vw, 26px);
+            font-family: 'Noto Serif SC', serif;
+            line-height: 1.25;
+        }
+        .action-panel__copy,
+        .action-panel__item p {
+            margin: 8px 0 0;
+            color: #5f6f63;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+        .action-panel__steps {
+            display: grid;
+            gap: 10px;
+        }
+        .action-panel__item {
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.48);
+            border: 1px solid rgba(218, 202, 176, 0.36);
+        }
+        .action-panel__item h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 13px;
+            line-height: 1.25;
+        }
+        @media (max-width: 820px) {
+            .action-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-river map-stage-layer"></div>
+<svg id="topographicLines" class="topographic-lines map-stage-layer" viewBox="0 0 1448 1086" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+<svg id="connectorLayer" class="connector-layer map-stage-layer" viewBox="0 0 1448 1086" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+<header class="app-header">
+<div class="brand">
+<svg class="brand-mark" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="3"></circle>
+<path d="M12 9V3M12 21v-6M9 12H3m18 0h-6M18.36 5.64l-4.24 4.24M5.64 18.36l4.24-4.24M18.36 18.36l-4.24-4.24M5.64 5.64l4.24 4.24"></path>
+</svg>
+<span>RelateMap</span>
+</div>
+<div class="nav-actions">
+<div>EN / <span class="muted">中</span></div>
+<button class="icon-button" type="button" aria-label="Account"><span class="material-symbols-outlined">account_circle</span></button>
+<button class="icon-button" type="button" aria-label="Settings"><span class="material-symbols-outlined">settings</span></button>
+</div>
+</header>
+<main>
+<div class="hero">
+<h1 class="hero-title">Cognitive River</h1>
+<p class="hero-subtitle">认知河流</p>
+<p class="hero-copy">看见你的思绪何处变窄、回流、扩展，何处改变方向</p>
+</div>
+<div id="nodeCards" class="floating-layer map-stage-layer" aria-label="Cognitive river nodes"></div>
+</main>
+
+<div id="statusBanner" class="status-banner glass-card"></div>
+
+<footer class="controls">
+<div class="controls-stack">
+<div class="timeline-panel glass-card">
+<div class="timeline-title">
+<span>流动时间轴</span>
+</div>
+<button class="timeline-play" type="button" aria-label="Play timeline">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+<div class="timeline-track">
+<div class="timeline-line">
+<div class="timeline-progress"></div>
+<div id="timelineMarkers" class="timeline-markers" aria-label="Flow timeline markers"></div>
+</div>
+</div>
+<div class="timeline-date">
+<span>Day 12 • 10:45 AM</span>
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+</div>
+<button id="nextStepButton" class="cta-button" type="button">
+                <span id="nextStepLabel">Next Step (下一步)</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<section id="actionPanel" class="action-panel glass-card" aria-label="Node action panel"></section>
+</div>
+<div id="summaryCards" class="summary-grid" aria-label="Flow summary cards"></div>
+</footer>
+<script>
+const topographicPaths = [
+    "M132 112c82-54 184-70 294-42",
+    "M168 148c92-42 194-50 302-20",
+    "M930 100c112-54 254-50 380 10",
+    "M966 150c104-42 226-38 330 14",
+    "M44 476c88-50 202-52 318-8",
+    "M1072 520c106-44 226-38 336 18"
+];
+
+const stageSize = {
+    width: 1448,
+    height: 1086
+};
+
+const nodeCards = [
+    {
+        number: 1,
+        title: "触发源头",
+        icon: "flare",
+        accent: "#f97316",
+        descriptionCn: "事件触发。",
+        meaning: "某个外部事件或内部念头启动了整条认知河流，关键是先分清事实和解释。",
+        avoid: "不要急着判断自己是不是又失败了，也不要立刻寻找完整原因。",
+        action: "写下一句事实：刚刚发生了什么。只记录可观察内容，不加评价。",
+        cta: "记录触发事实",
+        connection: {
+            point: [250, 200],
+            controls: [[250, 200], [250, 200]],
+            color: "#d29a3b"
+        },
+        card: {
+            offset: [-300, -10],
+            width: 188,
+            port: [188, 54]
+        }
+    },
+    {
+        number: 2,
+        title: "自动化念头狭道",
+        icon: "compress",
+        accent: "#0d9488",
+        descriptionCn: "思绪收窄，选择变少。",
+        meaning: "想法开始自动收窄，你可能只看到一种解释，忽略了其他可能。",
+        avoid: "暂时不要把第一个念头当成结论，也不要马上做决定。",
+        action: "列出三个替代解释：还有什么可能也能解释这件事。",
+        cta: "打开替代解释",
+        connection: {
+            point: [420, 280],
+            controls: [[420, 240], [420, 240]],
+            color: "#77945e"
+        },
+        card: {
+            offset: [160, -90],
+            width: 226,
+            port: [0, 20]
+        }
+    },
+    {
+        number: 3,
+        title: "情绪湍流",
+        icon: "waves",
+        accent: "#f43f5e",
+        descriptionCn: "情绪加速，水流湍急。",
+        meaning: "情绪系统正在接管判断，此时继续分析通常会让水流更急。",
+        avoid: "不要争辩、复盘或做重大决定，先不要追问为什么。",
+        action: "做 90 秒降速：慢呼吸，放松肩颈，只描述身体感受和眼前事实。",
+        cta: "开始降速",
+        connection: {
+            point: [780, 600],
+            controls: [[780, 600], [792, 600]],
+            color: "#cc7465"
+        },
+        card: {
+            offset: [140, -200],
+            width: 207,
+            port: [0, 18]
+        }
+    },
+    {
+        number: 4,
+        title: "自我解释回流",
+        icon: "loop",
+        accent: "#65a30d",
+        descriptionCn: "你回顾，试图理解发生了什么。",
+        meaning: "你正在回头解释自己，但解释过多会变成反刍，让河流在原地打转。",
+        avoid: "不要继续证明自己哪里错了，也不要反复重播同一个片段。",
+        action: "把解释缩成一句可检验假设：我以为 X，所以我感到 Y。",
+        cta: "整理一句假设",
+        connection: {
+            point: [365, 500],
+            controls: [[390, 500], [374, 500]],
+            color: "#77945e"
+        },
+        card: {
+            offset: [-400, -80],
+            width: 227,
+            port: [227, 54]
+        }
+    },
+    {
+        number: 5,
+        title: "回避支流",
+        icon: "block",
+        accent: "#9a3412",
+        descriptionCn: "你偏离，回避不适。",
+        meaning: "你正在离开不舒服的主线，短期会轻松，但问题可能继续堆积。",
+        avoid: "不要用刷屏、拖延或冷处理把感受完全盖住。",
+        action: "选一个 2 分钟内能完成的小动作，让自己重新接触主线。",
+        cta: "做最小行动",
+        connection: {
+            point: [1062, 592],
+            controls: [[1125, 574], [1086, 585]],
+            color: "#cc7465"
+        },
+        card: {
+            offset: [100, -60],
+            width: 206,
+            port: [0, 55]
+        }
+    },
+    {
+        number: 6,
+        title: "消耗低谷",
+        icon: "battery_low",
+        accent: "#c2410c",
+        descriptionCn: "能量下降，动力沉入。",
+        meaning: "能量已经明显下降，现在更需要恢复容量，而不是强行推进。",
+        avoid: "不要用意志力硬扛，也不要把低能量解释成懒或没用。",
+        action: "先补一个基础资源：喝水、离屏、走动、休息十分钟。",
+        cta: "恢复一点能量",
+        connection: {
+            point: [400, 850],
+            controls: [[400, 840], [400, 840]],
+            color: "#c16e55"
+        },
+        card: {
+            offset: [-390, -140],
+            width: 199,
+            port: [199, 68]
+        }
+    },
+    {
+        number: 7,
+        title: "新路径",
+        icon: "eco",
+        accent: "#4d6350",
+        descriptionCn: "选择不同，流向新的可能。",
+        meaning: "你已经看见另一条路径，重点不是一次改变彻底，而是让新路径可重复。",
+        avoid: "不要期待立刻稳定，也不要因为一次反复就否定变化。",
+        action: "记录这次有效的小改变，并选择下次最早能识别的信号。",
+        cta: "固化新路径",
+        connection: {
+            point: [960, 805],
+            controls: [[955, 800], [908, 800]],
+            color: "#77945e"
+        },
+        card: {
+            offset: [200, -120],
+            width: 207,
+            port: [0, 75]
+        }
+    }
+];
+
+let activeNodeNumber = 6;
+
+function getActiveNode() {
+    return nodeCards.find((node) => node.number === activeNodeNumber) || nodeCards[0];
+}
+
+function buildTimelineMarkers() {
+    return nodeCards.map((node) => ({
+        number: node.number,
+        accent: node.accent,
+        current: node.number === activeNodeNumber
+    }));
+}
+
+function buildSummaryCards(node) {
+    return [
+        {
+            category: "定位",
+            title: "当前卡点",
+            icon: node.icon,
+            valueText: node.title,
+            accent: node.accent,
+            descriptionCn: node.descriptionCn
+        },
+        {
+            category: "提醒",
+            title: "先别做",
+            icon: "back_hand",
+            valueText: "Pause",
+            accent: "#be123c",
+            descriptionCn: node.avoid
+        },
+        {
+            category: "行动",
+            title: "下一步",
+            icon: "route",
+            valueText: node.cta,
+            accent: "#047857",
+            descriptionCn: node.action
+        }
+    ];
+}
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[char]));
+}
+
+function cssVars(vars) {
+    return Object.entries(vars).map(([key, value]) => `--${key}: ${value}`).join("; ");
+}
+
+function addPoint([x, y], [dx, dy]) {
+    return [x + dx, y + dy];
+}
+
+function stagePercent(value, axis) {
+    const size = axis === "x" ? stageSize.width : stageSize.height;
+    return `${((value / size) * 100).toFixed(3)}%`;
+}
+
+function nodeFrame(node) {
+    const [left, top] = addPoint(node.connection.point, node.card.offset);
+
+    return {
+        left,
+        top,
+        width: node.card.width
+    };
+}
+
+function nodePort(node) {
+    const frame = nodeFrame(node);
+    return addPoint([frame.left, frame.top], node.card.port);
+}
+
+function icon(name, className = "") {
+    const classNames = ["material-symbols-outlined", className].filter(Boolean).join(" ");
+    return `<span class="${classNames}" aria-hidden="true">${escapeHtml(name)}</span>`;
+}
+
+function mount(id, html) {
+    document.getElementById(id).innerHTML = html;
+}
+
+function renderNodeCard(node) {
+    const frame = nodeFrame(node);
+    const activeClass = node.number === activeNodeNumber ? " is-active" : "";
+
+    return `
+        <article class="node-card glass-card${activeClass}" role="button" tabindex="0" aria-pressed="${node.number === activeNodeNumber}" data-node="${node.number}" style="${cssVars({
+            "accent-color": node.accent,
+            "card-x": stagePercent(frame.left, "x"),
+            "card-y": stagePercent(frame.top, "y"),
+            "card-width": stagePercent(frame.width, "x")
+        })}">
+            <div class="node-card__row">
+                <div class="node-card__badge">${node.number}</div>
+                <div class="node-card__body">
+                    <h4 class="node-card__title">
+                        <span>${escapeHtml(node.title)}</span>
+                    </h4>
+                    <p class="node-card__description">${escapeHtml(node.descriptionCn)}</p>
+                </div>
+            </div>
+        </article>
+    `;
+}
+
+function renderTimelineMarker(marker) {
+    const currentClass = marker.current ? " is-current" : "";
+
+    return `
+        <div class="timeline-marker" style="${cssVars({ "accent-color": marker.accent })}">
+            <div class="timeline-marker__dot${currentClass}"></div>
+            <span class="timeline-marker__label">${marker.number}</span>
+        </div>
+    `;
+}
+
+function renderSummaryCard(card) {
+    return `
+        <article class="metric-card glass-card" style="${cssVars({ "accent-color": card.accent })}">
+            <div class="metric-card__icon">
+                ${icon(card.icon)}
+            </div>
+            <div class="metric-card__body">
+                <div class="metric-card__header">
+                    <span class="metric-card__category">${escapeHtml(card.category)}</span>
+                    <h5 class="metric-card__title">${escapeHtml(card.title)}</h5>
+                </div>
+                <div class="metric-card__value">
+                    <span>${escapeHtml(card.valueText)}</span>
+                </div>
+                <p class="metric-card__copy">${escapeHtml(card.descriptionCn)}</p>
+            </div>
+        </article>
+    `;
+}
+
+function renderStatusBanner(node) {
+    return `
+        <div class="status-banner__content" style="${cssVars({ "accent-color": node.accent })}">
+            <span class="status-banner__label">当前定位</span>
+            <span class="status-banner__stage">${escapeHtml(node.title)} · 第 ${node.number} 阶段</span>
+            <span class="status-banner__desc">${escapeHtml(node.meaning)}</span>
+        </div>
+    `;
+}
+
+function renderActionPanel(node) {
+    return `
+        <div style="${cssVars({ "accent-color": node.accent })}">
+            <p class="action-panel__eyebrow">Where you are</p>
+            <h3 class="action-panel__title">${escapeHtml(node.title)}</h3>
+            <p class="action-panel__copy">${escapeHtml(node.meaning)}</p>
+        </div>
+        <div class="action-panel__steps" style="${cssVars({ "accent-color": node.accent })}">
+            <section class="action-panel__item">
+                <h4>先不要</h4>
+                <p>${escapeHtml(node.avoid)}</p>
+            </section>
+            <section class="action-panel__item">
+                <h4>现在做</h4>
+                <p>${escapeHtml(node.action)}</p>
+            </section>
+        </div>
+    `;
+}
+
+function renderTopographicLines(paths) {
+    return `
+        <g fill="none" stroke="#d9b889" stroke-width="1" stroke-linecap="round">
+            ${paths.map((path) => `<path d="${path}"/>`).join("")}
+        </g>
+    `;
+}
+
+function renderConnectorLayer(nodes) {
+    return nodes.map((node) => {
+        const [sx, sy] = nodePort(node);
+        const [cx, cy] = node.connection.point;
+        const [[x1, y1], [x2, y2]] = node.connection.controls;
+        const color = node.connection.color || node.accent;
+        const path = `M${sx} ${sy} C${x1} ${y1} ${x2} ${y2} ${cx} ${cy}`;
+
+        return `
+            <path d="${path}" stroke="${color}"/>
+            <circle cx="${cx}" cy="${cy}" r="5" stroke="${color}"/>
+        `;
+    }).join("");
+}
+
+function renderPageState() {
+    const node = getActiveNode();
+
+    mount("statusBanner", renderStatusBanner(node));
+    mount("actionPanel", renderActionPanel(node));
+    mount("nodeCards", nodeCards.map(renderNodeCard).join(""));
+    mount("timelineMarkers", buildTimelineMarkers().map(renderTimelineMarker).join(""));
+    mount("summaryCards", buildSummaryCards(node).map(renderSummaryCard).join(""));
+    document.getElementById("nextStepLabel").textContent = node.cta;
+}
+
+function setActiveNode(number) {
+    activeNodeNumber = number;
+    renderPageState();
+}
+
+document.getElementById("nodeCards").addEventListener("click", (event) => {
+    const card = event.target.closest("[data-node]");
+    if (card) {
+        setActiveNode(Number(card.dataset.node));
+    }
+});
+
+document.getElementById("nodeCards").addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+        return;
+    }
+
+    const card = event.target.closest("[data-node]");
+    if (card) {
+        event.preventDefault();
+        setActiveNode(Number(card.dataset.node));
+    }
+});
+
+mount("topographicLines", renderTopographicLines(topographicPaths));
+mount("connectorLayer", renderConnectorLayer(nodeCards));
+renderPageState();
+</script>
+</body></html>
