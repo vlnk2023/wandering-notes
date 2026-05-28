@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="搜集常用智能搜索引擎（Perplexity、Grok、Brave Search 等）及命令行接入方案，为知识库构建提供基础设施参考。">
-<title>常用智能搜索引擎搜集 · Wandering Notes</title>
+<meta name="description" content="利用 GitHub Codespaces 搭建干净 IP 节点的实用方法">
+<title>github上的codespace适合动态代理? · Wandering Notes</title>
 <style>
 
 :root {
@@ -596,19 +596,55 @@ mark {
     <a class="active" href="/posts">笔记</a>
   </nav>
 </header>
-<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a><a class="post-action secondary" href="/edit?path=data%2Fposts%2F2026-05-05-changyongsousuoyinqing.md&amp;slug=2026-05-05-changyongsousuoyinqing">编辑本文</a></div></nav><div class="post-hero"><h1>常用智能搜索引擎搜集</h1><time class="date" datetime="2026-05-05">2026-05-05</time><div class="tags"><a class="tag" href="/posts?tag=%E8%B5%84%E6%BA%90">#资源</a><a class="tag" href="/posts?tag=%E6%90%9C%E7%B4%A2">#搜索</a><a class="tag" href="/posts?tag=AI">#AI</a></div></div><article class="article"><h2>常用智能搜索引擎</h2>
-<p>搜集如下：</p>
-<p>https://x.com/i/grok</p>
-<p>https://andisearch.com/</p>
-<p>https://felo.ai/search</p>
-<p>https://www.perplexity.ai/</p>
-<p>https://search.brave.com/</p>
-<p>https://iask.ai/</p>
-<p>https://www.n.cn/</p>
-<p>https://ya.ru/alice/chat/   全都是俄语高质量信息来源</p>
-<p>https://www.quark.cn/  搜索插件</p>
-<p>https://readhub.cn/topic/8spii1YywVs 这个页面内容的话题追踪是怎么样的技术实现方案</p>
-<p>后续考虑如何利用这些引擎命令行接入bash脚本，自动解析或者接入tg内自动推送使用，作为知识库构建的系统基础框架。</p>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a><a class="post-action secondary" href="/edit?path=data%2Fposts%2F2026-05-20-codespace1.md&amp;slug=2026-05-20-codespace1">编辑本文</a></div></nav><div class="post-hero"><h1>github上的codespace适合动态代理?</h1><time class="date" datetime="2026-05-20">2026-05-20</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0">#技术笔记</a></div></div><article class="article"><p><strong>利用 GitHub Codespaces 搭建干净 IP 节点的实用方法</strong>（适合低强度、临时使用）。</p>
+<p>Codespaces 的出口 IP 来自 <strong>GitHub/Microsoft 的基础设施</strong>，属于数据中心 IP，但相对“干净”：不是廉价机房/滥用 NAT 池，历史记录好，黑名单风险低，常用于临时代理/解锁场景。IP 是动态的，每次新建可能不同，支持选 region（影响 IP 归属地）。</p>
+<p><strong>免费额度</strong>：个人免费约 120 core-hours/月（2核配置大概 60 小时），用完要付费或停掉 Codespace。</p>
+<h3>推荐最简单方式（Fork 现成项目）</h3>
+<ol>
+<li><p><strong>g2ray 项目</strong>（支持 v2ray/Xray 等协议）：</p>
+<ul>
+<li>去 https://github.com/amircloner/g2ray Fork 到自己账号。</li>
+<li>打开 Fork 仓库 → 点击 <strong>Code</strong> → <strong>Codespaces</strong> → <strong>Create codespace on main</strong>。</li>
+<li>等待构建（几分钟），终端会输出连接字符串（vmess/vless 等）。</li>
+<li>在客户端（如 v2rayNG、Nekobox、Clash）导入即可使用。</li>
+</ul>
+</li>
+<li><p><strong>SOCKS5 Proxy 项目</strong>（用 Chisel）：</p>
+<ul>
+<li>Fork https://github.com/AnimMouse/SOCKS5-Proxy-Codespaces。</li>
+<li>新建 Codespace，根据 README 操作：<ul>
+<li>暴露端口 8080 为 Public。</li>
+<li>本地运行 <code>chisel client &lt;端口地址&gt; socks</code>。</li>
+<li>浏览器/系统设本地 SOCKS5（127.0.0.1:1080）。支持 Cloudflare Tunnel 加速。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>手动 Squid HTTP 代理</strong>（简单但仅 HTTP/HTTPS）：</p>
+<ul>
+<li>新建任意仓库，打开 Codespace。</li>
+<li>创建 <code>install.sh</code> 脚本安装 Squid + ngrok 转发端口。</li>
+<li>加到 <code>.bashrc</code> 自动启动。</li>
+<li>用 ngrok 暴露后，本地配置 HTTP 代理。</li>
+</ul>
+</li>
+</ol>
+<h3>提升纯净度 &amp; 防封技巧</h3>
+<ul>
+<li><strong>新建时选 Region</strong>：不同地区 IP 归属地不同，测试哪个好用（欧美 IP 通常更干净）。</li>
+<li><strong>结合 CDN/中转</strong>：把 Codespaces 作为源站，用 Cloudflare 回源，只暴露 CDN IP，进一步隐藏。</li>
+<li><strong>低调使用</strong>：别高频滥用、别跑代理池。每次用完 <strong>Stop</strong> 或删除 Codespace，养 IP。</li>
+<li><strong>检测 IP</strong>：用 <code>ping0.cc/ip</code>、<code>ipinfo.io</code>、<code>whoer.net</code> 检查风险值、是否住宅-like、黑名单。</li>
+<li><strong>协议混淆</strong>：用 Reality、gRPC、WS+TLS 等抗封协议。</li>
+<li><strong>多开</strong>：同时开几个不同 region 的 Codespace 切换。</li>
+</ul>
+<h3>注意事项 &amp; 限制</h3>
+<ul>
+<li><strong>不适合高强度/长期</strong>：免费时长有限，GitHub 会监控滥用（高流量、恶意行为可能封账号）。</li>
+<li><strong>端口转发</strong>：Codespaces 默认只支持有限端口公开，SOCKS/VMess 需 Chisel/ngrok/cloudflared 隧道。</li>
+<li><strong>IP 动态</strong>：重启/新建会换 IP，优点是“新鲜”，缺点是不固定。</li>
+<li><strong>合规</strong>：仅用于学习/个人合法用途，遵守 GitHub ToS 和当地法规。</li>
+</ul>
 </article></main>
 </body>
 </html>
