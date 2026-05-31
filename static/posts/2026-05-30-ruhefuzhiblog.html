@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="快速做出blog网站">
+<title>如何复制blog网站风格 · Wandering Notes</title>
+<style>
+
+:root {
+  --bg:#f7f3eb;
+  --paper:#fffdf8;
+  --paper-strong:#fff8eb;
+  --ink:#201b16;
+  --muted:#70675c;
+  --quiet:#9b9184;
+  --line:#e6ded0;
+  --line-soft:#f0e8db;
+  --accent:#0e6f6d;
+  --accent-deep:#094d4b;
+  --accent-soft:#dff1ec;
+  --amber:#af6b1a;
+  --amber-soft:#f7e8c9;
+  --rose:#8b4738;
+  --shadow:0 20px 60px rgba(79,55,28,.11);
+  --shadow-soft:0 10px 26px rgba(79,55,28,.08);
+  --radius:22px;
+  --radius-md:16px;
+  --radius-sm:10px;
+}
+*,*::before,*::after { box-sizing:border-box }
+html { scroll-behavior:smooth }
+body {
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 8% -8%, rgba(14,111,109,.14), transparent 34rem),
+    radial-gradient(circle at 88% 8%, rgba(175,107,26,.15), transparent 28rem),
+    linear-gradient(180deg, #fbf6ec 0%, var(--bg) 42%, #f3eee5 100%);
+  font-family:"Noto Serif SC","Source Han Serif SC","LXGW WenKai","PingFang SC","Microsoft YaHei",serif;
+  font-size:16px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.52;
+  background-image:
+    linear-gradient(rgba(32,27,22,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32,27,22,.027) 1px, transparent 1px);
+  background-size:34px 34px;
+  mask-image:linear-gradient(180deg, rgba(0,0,0,.65), transparent 68%);
+}
+a { color:var(--accent); text-decoration:none; text-underline-offset:3px }
+a:hover { color:var(--accent-deep); text-decoration:underline }
+button,input,select { font:inherit }
+.sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+.topbar {
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid rgba(230,222,208,.78);
+  background:rgba(255,253,248,.82);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+.nav {
+  max-width:1120px;
+  min-height:64px;
+  margin:0 auto;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.brand {
+  flex:0 0 auto;
+  color:var(--ink);
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.01em;
+}
+.brand::before {
+  content:"";
+  display:inline-block;
+  width:9px;
+  height:9px;
+  margin-right:9px;
+  border-radius:99px;
+  background:var(--accent);
+  box-shadow:0 0 0 5px rgba(14,111,109,.12);
+  vertical-align:1px;
+}
+.nav a:not(.brand) {
+  color:var(--muted);
+  font-size:14px;
+  font-weight:700;
+  text-decoration:none;
+  padding:5px 0;
+  border-bottom:2px solid transparent;
+}
+.nav a:not(.brand):hover,
+.nav a.active {
+  color:var(--ink);
+  border-bottom-color:var(--accent);
+}
+.nav-search {
+  flex:1 1 520px;
+  max-width:560px;
+  margin-left:auto;
+}
+.nav-search-box {
+  position:relative;
+}
+.nav-search-box::before {
+  content:"⌕";
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--quiet);
+  font-size:20px;
+  z-index:1;
+}
+.nav-search #searchInput {
+  width:100%;
+  min-height:42px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,250,241,.94);
+  color:var(--ink);
+  outline:none;
+  padding:0 76px 0 44px;
+}
+.nav-search #searchInput:focus {
+  border-color:rgba(14,111,109,.55);
+  box-shadow:0 0 0 4px rgba(14,111,109,.12);
+}
+.nav-search-submit {
+  position:absolute;
+  right:5px;
+  top:5px;
+  min-height:32px;
+  padding:0 14px;
+  border:0;
+  border-radius:999px;
+  background:var(--ink);
+  color:#fffaf1;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:900;
+}
+.nav-search-submit:hover { background:var(--accent-deep) }
+.wrap,
+.home-shell {
+  width:min(1120px, 100%);
+  margin:0 auto;
+  padding:0 24px;
+}
+.post-wrap {
+  width:min(880px, 100%);
+  margin:0 auto;
+  padding:0 24px;
+}
+.post-hero {
+  padding:64px 0 34px;
+  text-align:center;
+}
+.post-hero h1 {
+  max-width:780px;
+  margin:0 auto 14px;
+  color:var(--ink);
+  font-size:clamp(30px, 5vw, 52px);
+  font-weight:900;
+  line-height:1.16;
+  letter-spacing:-.045em;
+}
+.post-hero .date {
+  display:block;
+  color:var(--quiet);
+  font-size:14px;
+  margin-bottom:16px;
+}
+.tags {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.tag,
+.mini-tag,
+.filter-pill {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid rgba(14,111,109,.16);
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  font-size:13px;
+  font-weight:700;
+  line-height:1;
+  text-decoration:none;
+}
+.tag { padding:7px 12px }
+.mini-tag { padding:6px 10px }
+.tag:hover,
+.mini-tag:hover {
+  color:var(--accent-deep);
+  background:#cfe9e3;
+  text-decoration:none;
+}
+.article {
+  max-width:760px;
+  margin:0 auto 56px;
+  padding:32px clamp(20px, 4vw, 42px);
+  border:1px solid rgba(230,222,208,.9);
+  border-radius:var(--radius);
+  background:rgba(255,253,248,.88);
+  box-shadow:var(--shadow-soft);
+}
+.article h2 {
+  margin:44px 0 16px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line-soft);
+  color:var(--ink);
+  font-size:26px;
+  font-weight:900;
+  line-height:1.35;
+  letter-spacing:-.025em;
+}
+.article h2:first-child { margin-top:0 }
+.article h3 {
+  margin:34px 0 12px;
+  color:var(--ink);
+  font-size:21px;
+  font-weight:800;
+}
+.article h4 {
+  margin:26px 0 10px;
+  color:var(--ink);
+  font-size:17px;
+  font-weight:800;
+}
+.article p { margin:0 0 18px; color:var(--muted); line-height:1.86 }
+.article ul,
+.article ol { margin:0 0 20px; padding-left:26px; color:var(--muted) }
+.article li { margin-bottom:7px }
+.article li > ul,
+.article li > ol { margin-bottom:0 }
+.article hr { border:none; border-top:1px solid var(--line); margin:38px 0 }
+.article code {
+  border:1px solid #e6dac8;
+  border-radius:8px;
+  background:#f3eadb;
+  padding:2px 6px;
+  color:#3b2e20;
+  font-family:"JetBrains Mono","Fira Code","Cascadia Code",Consolas,monospace;
+  font-size:.9em;
+}
+.article pre {
+  margin:0 0 22px;
+  padding:18px 20px;
+  overflow-x:auto;
+  border:1px solid #e3d7c4;
+  border-radius:var(--radius-md);
+  background:#f4ecdf;
+  font-size:14px;
+  line-height:1.65;
+}
+.article pre code { border:none; background:transparent; padding:0; font-size:inherit }
+.article blockquote {
+  margin:0 0 24px;
+  padding:16px 20px;
+  border-left:4px solid var(--accent);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  background:rgba(223,241,236,.7);
+  color:var(--muted);
+}
+.article blockquote p { margin:0; color:inherit }
+.article blockquote p + p { margin-top:10px }
+.article table {
+  width:100%;
+  margin:0 0 24px;
+  border-collapse:collapse;
+  font-size:14px;
+}
+.article th,
+.article td {
+  border:1px solid var(--line);
+  padding:10px 14px;
+  text-align:left;
+  vertical-align:top;
+}
+.article th {
+  background:var(--paper-strong);
+  color:var(--ink);
+  font-weight:800;
+}
+.article td { color:var(--muted) }
+.article img {
+  display:block;
+  max-width:100%;
+  margin:12px 0;
+  border:1px solid var(--line);
+  border-radius:var(--radius-md);
+}
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
+.side-card,
+.post-card {
+  border:1px solid rgba(230,222,208,.9);
+  background:rgba(255,253,248,.86);
+  box-shadow:var(--shadow-soft);
+}
+.facet-chip,
+.filter-pill button {
+  border:none;
+  cursor:pointer;
+}
+.content-grid {
+  display:grid;
+  grid-template-columns:220px minmax(0, 1fr);
+  gap:22px;
+  align-items:start;
+  padding:28px 0 64px;
+}
+.sidebar {
+  position:sticky;
+  top:86px;
+  display:grid;
+  gap:16px;
+}
+.side-card {
+  border-radius:18px;
+  padding:14px;
+}
+.side-card h2 {
+  margin:0 0 10px;
+  color:var(--muted);
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.02em;
+}
+.facet-chip {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fffaf1;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+}
+.facet-chip:hover,
+.facet-chip.active {
+  border-color:rgba(14,111,109,.24);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+}
+.facet-chip span {
+  color:var(--quiet);
+  font-size:12px;
+  font-weight:800;
+}
+.archive-stack {
+  display:grid;
+  gap:8px;
+}
+.archive-button {
+  width:100%;
+  justify-content:space-between;
+  border-radius:14px;
+}
+.active-filters {
+  min-height:31px;
+  margin:0 0 14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.filter-pill {
+  padding:7px 9px 7px 12px;
+  background:var(--amber-soft);
+  color:#6d4113;
+  border-color:rgba(175,107,26,.2);
+}
+.filter-pill button {
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(109,65,19,.12);
+  color:#6d4113;
+  font-weight:900;
+}
+.month-section {
+  margin:0 0 28px;
+}
+.month-title {
+  margin:0 0 12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:var(--muted);
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+.month-title::after {
+  content:"";
+  height:1px;
+  flex:1;
+  background:var(--line);
+}
+.month-title span:last-child {
+  color:var(--quiet);
+  font-weight:800;
+}
+.post-list {
+  display:grid;
+  gap:14px;
+}
+.post-card {
+  border-radius:var(--radius);
+  padding:22px;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.post-card:hover {
+  transform:translateY(-2px);
+  border-color:rgba(14,111,109,.22);
+  box-shadow:var(--shadow);
+}
+.post-meta {
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  align-items:center;
+  margin-bottom:10px;
+  color:var(--quiet);
+  font-size:13px;
+  font-weight:800;
+}
+.dot::before {
+  content:"";
+  display:inline-block;
+  width:4px;
+  height:4px;
+  margin:0 9px 2px 0;
+  border-radius:999px;
+  background:var(--line);
+}
+.post-title {
+  display:inline;
+  color:var(--ink);
+  font-size:23px;
+  font-weight:900;
+  line-height:1.28;
+  letter-spacing:-.025em;
+  text-decoration:none;
+}
+.post-title:hover { color:var(--accent-deep); text-decoration:none }
+.post-summary {
+  margin:10px 0 0;
+  color:var(--muted);
+  line-height:1.75;
+}
+.post-tags {
+  margin-top:14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+mark {
+  border-radius:5px;
+  background:#ffe39b;
+  color:inherit;
+  padding:0 2px;
+}
+.empty {
+  padding:56px 24px;
+  border:1px dashed var(--line);
+  border-radius:var(--radius);
+  background:rgba(255,253,248,.68);
+  color:var(--muted);
+  text-align:center;
+}
+.empty strong {
+  display:block;
+  margin-bottom:6px;
+  color:var(--ink);
+  font-size:20px;
+}
+.empty[hidden] { display:none }
+@media (max-width:900px) {
+  .content-grid {
+    grid-template-columns:1fr;
+    padding-top:18px;
+  }
+  .sidebar {
+    position:static;
+  }
+  .sidebar {
+    display:block;
+  }
+  .archive-stack { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:thin }
+  .archive-button { width:auto; flex:0 0 auto }
+}
+@media (max-width:680px) {
+  .nav { min-height:0; padding:10px 18px; gap:10px 14px; flex-wrap:wrap }
+  .nav-search { order:3; flex-basis:100%; max-width:none; margin-left:0 }
+  .home-shell,
+  .wrap,
+  .post-wrap { padding:0 18px }
+  .content-grid { gap:14px; padding-top:14px }
+  .side-card { margin:0 -2px; padding:12px; border-radius:16px }
+  .side-card h2 { font-size:14px }
+  .active-filters { min-height:0 }
+  .post-card { padding:18px }
+  .post-title { font-size:20px }
+  .article { padding:24px 18px }
+  .post-hero { padding:40px 0 26px }
+}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <nav class="nav" aria-label="主导航">
+    <a class="brand" href="/posts">Wandering Notes</a>
+    <form class="nav-search" id="navSearchForm" action="/posts" method="get" role="search">
+      <label class="sr-only" for="searchInput">全文搜索</label>
+      <div class="nav-search-box">
+        <input id="searchInput" name="q" type="search" placeholder="搜索标题、正文、标签..." autocomplete="off">
+        <button class="nav-search-submit" type="submit">搜索</button>
+      </div>
+    </form>
+    <a class="active" href="/posts">笔记</a>
+    <a href="/cognitive-map">认知地图</a>
+  </nav>
+</header>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a><a class="post-action secondary" href="/edit?path=data%2Fposts%2F2026-05-30-ruhefuzhiblog.md&amp;slug=2026-05-30-ruhefuzhiblog">编辑本文</a></div></nav><div class="post-hero"><h1>如何复制blog网站风格</h1><time class="date" datetime="2026-05-30">2026-05-30</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0">#技术笔记</a></div></div><article class="article"><blockquote>
+<p>目标读者：不会系统做前端设计、但想用 AI 快速复刻一个 Blog 网站结构的新手<br />
+核心原则：借鉴结构和方法，不照搬品牌、文案、Logo、图片和专有内容。</p>
+</blockquote>
+<h2>1. 这套流程适合做什么</h2>
+<p>这套方法适合快速做出这些页面：</p>
+<ul>
+<li>Blog 首页</li>
+<li>内容中心</li>
+<li>SaaS 文章列表页</li>
+<li>行业洞察站</li>
+<li>知识库首页</li>
+<li>报告和白皮书列表页</li>
+<li>产品更新日志页</li>
+<li>轻量内容型官网</li>
+</ul>
+<p>如果你只是想做一个能看的静态页面，可以做到。<br />
+如果你想继续升级成 Nuxt、Next、Astro、Vue 或 React 项目，这套流程也能继续往下接。</p>
+<h2>2. 你需要准备什么</h2>
+<h3>2.1 工具</h3>
+<p>建议准备这些工具：</p>
+<table>
+<thead>
+<tr>
+  <th>工具</th>
+  <th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>OpenCode</td>
+  <td>读取本地文件、生成设计文档、对比代码、整合最终方案</td>
+</tr>
+<tr>
+  <td>Big Pickle OpenCode Zen</td>
+  <td>OpenCode 内可用的免费模型，用来做分析和规划</td>
+</tr>
+<tr>
+  <td>Google Stitch</td>
+  <td>根据设计文档生成视觉更完整的静态 HTML/CSS 页面</td>
+</tr>
+<tr>
+  <td>Gemini</td>
+  <td>根据设计文档生成更偏交互和路由的页面</td>
+</tr>
+<tr>
+  <td>浏览器</td>
+  <td>打开参考网站、检查生成结果</td>
+</tr>
+<tr>
+  <td>VS Code 或任意编辑器</td>
+  <td>保存和查看 Markdown、HTML、CSS 文件</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2 参考网站</h3>
+<p>本文以这个 Blog 网站作为参考对象：</p>
+<pre><code class="language-text">https://blog.insightrackr.com/?referer=ist_blog
+</code></pre>
+<p>你也可以换成任何你喜欢的 Blog 网站。</p>
+<h3>2.3 推荐文件结构</h3>
+<p>新手最容易乱在“文件到处放”。建议一开始就建立清晰目录：</p>
+<pre><code class="language-text">blog-copy-project/
+├── 00-reference/
+│   ├── screenshots/
+│   └── page-notes.md
+├── 01-analysis/
+│   └── reference-analysis.md
+├── 02-design/
+│   ├── frontend-design-plan.md
+│   └── blog-design-simple.md
+├── 03-prototypes/
+│   ├── copy_blog_stitch.html
+│   └── copy_blog.html
+├── 04-system/
+│   ├── acceptance-checklist.md
+│   └── implementation-plan.md
+└── 05-final/
+    └── final-blog.html
+</code></pre>
+<p>如果你只想简单做，也可以先把文件都放在同一个文件夹里。<br />
+但只要文件多起来，目录结构会救你一命。</p>
+<h2>3. 总流程：不要一上来就让 AI 写代码</h2>
+<p>很多新手一开始会这样问：</p>
+<pre><code class="language-text">帮我模仿这个网站写一个 HTML 页面。
+</code></pre>
+<p>这种问法能得到页面，但质量经常不稳定。更好的方法是先做设计规格，再做代码。</p>
+<p>推荐流程：</p>
+<pre><code class="language-text">第一步：放大分析参考站
+第二步：策划完整设计方案
+第三步：压缩成小白可执行 MVP
+第四步：加密核心细节
+第五步：生成验收清单
+第六步：用 Stitch 生成视觉原型
+第七步：用 Gemini 生成交互原型
+第八步：让 OpenCode 对比融合
+第九步：生成最终实现
+第十步：按验收清单检查
+</code></pre>
+<p>这套流程看起来比“直接写代码”多几步，但实际上更稳。因为你先把需求讲清楚了，后面模型犯错会少很多。</p>
+<h2>4. 第一步：放大分析参考站</h2>
+<h3>4.1 这一步的目的</h3>
+<p>这一步不要写代码。<br />
+目标是让 AI 把参考网站拆开，看清楚它由哪些部分组成。</p>
+<p>你要得到的是：</p>
+<ul>
+<li>信息架构</li>
+<li>页面布局</li>
+<li>具体文案结构</li>
+<li>颜色、字体、间距、圆角、阴影</li>
+<li>Header、卡片、标签、侧边栏、搜索、分页、Footer</li>
+<li>桌面、平板、手机的布局变化</li>
+<li>可复用设计规律</li>
+</ul>
+<h3>4.2 给 OpenCode 的提示词</h3>
+<p>打开 OpenCode，选择免费模型 <code>Big Pickle OpenCode Zen</code>，输入：</p>
+<pre><code class="language-text">请分析这个 Blog 页面：
+
+https://blog.insightrackr.com/?referer=ist_blog
+
+请从以下维度拆解，不要写代码，只输出可复用的设计和实现规律：
+
+1. 信息架构和具体文案
+   - 页面有哪些区域
+   - 每个区域承担什么作用
+   - 标题、摘要、分类、日期、按钮等文案如何组织
+
+2. 布局结构
+   - 请用 ASCII 图说明桌面端结构
+   - 请说明侧边栏、主内容区、文章卡片区域的位置关系
+   - 请说明各区域大致宽度、间距和层级
+
+3. 设计系统
+   - 颜色
+   - 字体
+   - 字号
+   - 间距
+   - 圆角
+   - 阴影
+   - 分割线
+   - 背景色
+
+4. 组件规范
+   - Header
+   - 搜索框
+   - 侧边栏
+   - 分类标签
+   - 文章卡片
+   - 分页器
+   - Footer
+   - 二维码或社交入口
+
+5. 响应式策略
+   - 桌面端如何布局
+   - 平板端如何变化
+   - 手机端如何变化
+   - 侧边栏、搜索、卡片列数、分页在不同屏幕下如何处理
+
+6. 内容模型
+   - 每篇文章需要哪些字段
+   - 分类和标签如何设计
+   - 哪些字段用于搜索
+   - 哪些字段用于排序和分页
+
+7. SEO 和可访问性
+   - 标题层级如何设计
+   - 列表页如何利于搜索引擎收录
+   - 按钮、链接、输入框需要哪些基本可访问性处理
+
+请保存为 Markdown 文件：reference-analysis.md
+</code></pre>
+<h3>4.3 你应该检查什么</h3>
+<p>模型生成后，不要急着进入下一步。先看 <code>reference-analysis.md</code> 是否包含这些内容：</p>
+<ul>
+<li>有没有 ASCII 布局图</li>
+<li>有没有组件清单</li>
+<li>有没有颜色、字体、间距、圆角</li>
+<li>有没有桌面、平板、手机说明</li>
+<li>有没有内容模型</li>
+<li>有没有 SEO 或可访问性提醒</li>
+</ul>
+<p>如果缺了，就继续追问：</p>
+<pre><code class="language-text">请补充缺失部分，重点补充组件规范、内容模型和三端响应式策略。
+</code></pre>
+<h2>5. 第二步：策划完整设计方案</h2>
+<h3>5.1 这一步的目的</h3>
+<p>第一步是分析别人。<br />
+第二步是做你自己的新方案。</p>
+<p>注意：不是让 AI 继续照搬原站，而是让它模仿参考站的结构规律，策划一个新的 Blog 前端设计方案。</p>
+<h3>5.2 给 OpenCode 的提示词</h3>
+<pre><code class="language-text">请基于 reference-analysis.md 的分析，策划一个新的类似 Blog 前端设计方案。
+
+要求：
+
+1. 不要照搬原站品牌、Logo、文案和图片。
+2. 保留参考站的结构优点，例如：
+   - 清晰 Header
+   - 侧边分类
+   - 文章卡片网格
+   - 搜索入口
+   - 分页
+   - Footer
+3. 输出一个完整设计方案，包含：
+   - 信息架构
+   - 页面路由
+   - 首页布局
+   - 文章详情页布局
+   - 分类页
+   - 搜索页
+   - 404 页
+   - 设计 token
+   - 组件规范
+   - 响应式策略
+   - 技术栈建议
+   - 关键设计决策和理由
+
+请保存为 Markdown 文件：frontend-design-plan.md
+</code></pre>
+<h3>5.3 这一步常见输出</h3>
+<p>模型通常会生成比较完整的方案，可能包含：</p>
+<ul>
+<li>首页</li>
+<li>详情页</li>
+<li>分类页</li>
+<li>搜索页</li>
+<li>404</li>
+<li>Header</li>
+<li>侧边栏</li>
+<li>文章卡片</li>
+<li>Tag</li>
+<li>分页器</li>
+<li>搜索</li>
+<li>Footer</li>
+<li>骨架屏</li>
+<li>Nuxt 或 Next 技术方案</li>
+</ul>
+<p>这一步可能会显得复杂。不要慌。复杂是正常的，因为我们正在“放大”。</p>
+<h2>6. 第三步：压缩成小白可执行 MVP</h2>
+<h3>6.1 这一步的目的</h3>
+<p>完整方案很有用，但新手直接照着做会压力很大。<br />
+所以第三步要把它压缩成一个最小可执行版本。</p>
+<p>MVP 的意思是：先做最核心、最能跑起来的一版。</p>
+<p>对于 Blog 首页，MVP 只需要这些：</p>
+<ul>
+<li>Header</li>
+<li>搜索框</li>
+<li>分类侧边栏</li>
+<li>文章卡片列表</li>
+<li>分页器</li>
+<li>Footer</li>
+<li>手机端布局</li>
+</ul>
+<p>暂时可以不要：</p>
+<ul>
+<li>复杂详情页</li>
+<li>多语言</li>
+<li>登录</li>
+<li>评论系统</li>
+<li>骨架屏</li>
+<li>后台 CMS</li>
+<li>复杂动画</li>
+</ul>
+<h3>6.2 给 OpenCode 的提示词</h3>
+<pre><code class="language-text">frontend-design-plan.md 太复杂了。
+
+请把它压缩成一个适合小白第一版实现的 Blog 首页 MVP 方案。
+
+只保留必须实现的内容：
+
+1. Header
+2. 搜索框
+3. 分类侧边栏
+4. 文章卡片网格
+5. 分页器
+6. Footer
+7. 桌面、平板、手机响应式布局
+
+请删除或暂缓：
+
+1. 复杂文章详情页
+2. 骨架屏
+3. 多语言
+4. 登录注册
+5. 评论系统
+6. 后台管理
+7. 复杂路由
+
+请输出一个简化但仍然完整的设计文档，保存为：
+
+blog-design-simple.md
+</code></pre>
+<h3>6.3 小白判断标准</h3>
+<p>压缩后的文档应该让你感觉：</p>
+<pre><code class="language-text">我看得懂；
+我知道要做哪些组件；
+我知道页面大概长什么样；
+我知道桌面和手机有什么区别；
+我能拿它去让别的 AI 生成 HTML/CSS。
+</code></pre>
+<p>如果模型压缩得太狠，内容变得很空，就继续补一句：</p>
+<pre><code class="language-text">这个版本太简单了，请保留必要的布局尺寸、组件状态和响应式说明。
+</code></pre>
+<h2>7. 第四步：加密核心细节</h2>
+<h3>7.1 为什么要加密</h3>
+<p>新手常犯的错误是：文档看起来有设计，但代码生成出来很松散。</p>
+<p>原因通常是关键细节不够密：</p>
+<ul>
+<li>卡片多宽</li>
+<li>图片什么比例</li>
+<li>标题最多几行</li>
+<li>摘要最多几行</li>
+<li>hover 怎么动</li>
+<li>手机端几列</li>
+<li>侧边栏怎么折叠</li>
+<li>搜索框在哪</li>
+<li>分页在手机上怎么显示</li>
+</ul>
+<p>所以第四步不是把所有内容都细化，而是只细化最容易翻车的部分。</p>
+<h3>7.2 给 OpenCode 的提示词</h3>
+<pre><code class="language-text">请继续细化 blog-design-simple.md。
+
+不要扩展新功能，只细化以下高风险部分：
+
+1. 布局结构
+   - 给出桌面端 ASCII 布局图
+   - 给出平板端 ASCII 布局图
+   - 给出手机端 ASCII 布局图
+   - 标注 Header 高度、侧边栏宽度、内容区最大宽度、卡片间距
+
+2. 设计 token
+   - 用 CSS 自定义属性格式输出
+   - 包含颜色、字体、字号、行高、间距、圆角、阴影、断点
+
+3. 文章卡片细节
+   - 卡片宽度和高度建议
+   - 图片比例
+   - 标签样式
+   - 标题最多几行
+   - 摘要最多几行
+   - 日期位置
+   - hover 动效
+   - 阴影变化
+   - 内边距
+
+4. 组件规范
+   - Header
+   - 搜索框
+   - 侧边栏
+   - 分类按钮
+   - 文章卡片
+   - 分页器
+   - Footer
+
+5. 响应式行为
+   - 桌面端列数
+   - 平板端列数
+   - 手机端列数
+   - 侧边栏在不同屏幕下如何变化
+   - 搜索框在不同屏幕下如何变化
+   - 分页在手机端如何简化
+
+请直接更新 blog-design-simple.md。
+</code></pre>
+<h3>7.3 最好得到什么结果</h3>
+<p>这一步之后，<code>blog-design-simple.md</code> 应该变成可以直接喂给 Stitch 或 Gemini 的规格文档。</p>
+<p>它应该包含类似这样的内容：</p>
+<pre><code class="language-css">:root {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #6b7280;
+  --radius-card: 8px;
+  --space-4: 16px;
+  --shadow-card: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+</code></pre>
+<p>还应该包含类似这样的卡片规则：</p>
+<pre><code class="language-text">文章卡片：
+- 桌面端 3 列
+- 平板端 2 列
+- 手机端 1 列
+- 封面图比例 16:9
+- 标题最多 2 行
+- 摘要最多 2 行
+- hover 时向上移动 2px
+- hover 时阴影加深
+</code></pre>
+<h2>8. 第五步：生成验收清单</h2>
+<h3>8.1 这一步很重要</h3>
+<p>原始流程里没有这一环，但强烈建议补上。</p>
+<p>因为 AI 生成页面时，经常会出现这种问题：</p>
+<ul>
+<li>看起来像，但移动端乱了</li>
+<li>有搜索框，但不能用</li>
+<li>卡片好看，但数据写死</li>
+<li>有分页，但只是装饰</li>
+<li>Header 在小屏幕挤爆</li>
+<li>颜色不统一</li>
+<li>文案和参考站太像</li>
+</ul>
+<p>所以在生成代码前，先让 AI 生成验收清单。</p>
+<h3>8.2 给 OpenCode 的提示词</h3>
+<pre><code class="language-text">请基于 blog-design-simple.md 生成一份实现验收清单。
+
+要求覆盖以下维度：
+
+1. 视觉一致性
+2. 组件完整性
+3. 桌面、平板、手机响应式
+4. 搜索、分类、分页交互
+5. 文章数据结构
+6. SEO 基础
+7. 可访问性基础
+8. 性能基础
+9. 版权和品牌边界
+
+每一项都写成可以检查的句子，例如：
+
+- 桌面端文章列表为 3 列网格；
+- 手机端文章列表为单列；
+- 文章卡片标题最多显示 2 行；
+- 搜索应匹配标题、摘要、分类和标签；
+- 不使用参考站原始 Logo、图片和文章全文。
+
+请保存为 Markdown 文件：acceptance-checklist.md
+</code></pre>
+<h3>8.3 验收清单示例</h3>
+<p>你最终可以用下面这类问题检查页面：</p>
+<table>
+<thead>
+<tr>
+  <th>维度</th>
+  <th>检查问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>视觉</td>
+  <td>页面是否有统一颜色、圆角、阴影和间距</td>
+</tr>
+<tr>
+  <td>Header</td>
+  <td>Logo、搜索、导航入口是否清楚</td>
+</tr>
+<tr>
+  <td>侧边栏</td>
+  <td>分类是否可点击，选中态是否明显</td>
+</tr>
+<tr>
+  <td>文章卡片</td>
+  <td>图片、标签、标题、摘要、日期是否完整</td>
+</tr>
+<tr>
+  <td>搜索</td>
+  <td>是否能按标题、摘要、分类、标签过滤</td>
+</tr>
+<tr>
+  <td>分页</td>
+  <td>是否能切换页码，手机端是否不拥挤</td>
+</tr>
+<tr>
+  <td>响应式</td>
+  <td>桌面 3 列、平板 2 列、手机 1 列是否成立</td>
+</tr>
+<tr>
+  <td>SEO</td>
+  <td>是否有语义化标题和文章列表结构</td>
+</tr>
+<tr>
+  <td>版权</td>
+  <td>是否避免照搬原站品牌资产</td>
+</tr>
+</tbody>
+</table>
+<h2>9. 第六步：用 Stitch 生成视觉原型</h2>
+<h3>9.1 这一步的目的</h3>
+<p>Stitch 比较适合生成页面视觉细节。<br />
+它通常能做出比较完整、比较像设计稿的静态页面。</p>
+<p>缺点是：交互、路由、数据逻辑可能比较弱。</p>
+<p>所以我们把 Stitch 生成的结果当作“视觉样板”。</p>
+<h3>9.2 操作方法</h3>
+<p>打开：</p>
+<pre><code class="language-text">https://stitch.withgoogle.com/?pli=1
+</code></pre>
+<p>上传：</p>
+<pre><code class="language-text">blog-design-simple.md
+</code></pre>
+<p>然后输入：</p>
+<pre><code class="language-text">请根据我上传的 blog-design-simple.md，用 HTML + CSS 实现一个静态 Blog 首页。
+
+要求：
+
+1. 尽量严格遵守文档里的布局、token、组件和卡片细节；
+2. 页面只需要静态展示，不需要复杂交互；
+3. 重点保证视觉完成度；
+4. 必须包含 Header、搜索框、侧边栏、文章卡片、分页器、Footer；
+5. 必须包含桌面、平板、手机响应式；
+6. 不要使用参考站的 Logo、品牌名、原文案和原图片；
+7. 文章数据可以使用虚构示例内容。
+
+请输出完整 HTML + CSS 代码。
+</code></pre>
+<p>生成后，把代码保存为：</p>
+<pre><code class="language-text">copy_blog_stitch.html
+</code></pre>
+<h3>9.3 检查重点</h3>
+<p>打开 <code>copy_blog_stitch.html</code>，重点看：</p>
+<ul>
+<li>页面是否好看</li>
+<li>卡片是否统一</li>
+<li>间距是否舒服</li>
+<li>字体层级是否清楚</li>
+<li>手机端是否正常</li>
+<li>是否有明显视觉问题</li>
+</ul>
+<p>如果视觉不错，即使没交互也没关系。它的角色就是视觉样板。</p>
+<h2>10. 第七步：用 Gemini 生成交互原型</h2>
+<h3>10.1 这一步的目的</h3>
+<p>Gemini 生成的页面视觉可能不如 Stitch 稳，但经常更愿意写一点交互逻辑。</p>
+<p>比如：</p>
+<ul>
+<li>搜索过滤</li>
+<li>分类筛选</li>
+<li>分页切换</li>
+<li>简单路由模拟</li>
+<li>卡片点击详情</li>
+<li>移动菜单</li>
+</ul>
+<p>所以我们把 Gemini 生成的结果当作“行为样板”。</p>
+<h3>10.2 操作方法</h3>
+<p>打开：</p>
+<pre><code class="language-text">https://gemini.google.com/
+</code></pre>
+<p>上传：</p>
+<pre><code class="language-text">blog-design-simple.md
+</code></pre>
+<p>然后输入：</p>
+<pre><code class="language-text">请根据我上传的 blog-design-simple.md，用 HTML + CSS + JavaScript 实现一个 Blog 首页原型。
+
+要求：
+
+1. 页面包含 Header、搜索框、侧边栏、文章卡片、分页器、Footer；
+2. 使用虚构文章数据数组驱动页面；
+3. 搜索可以匹配标题、摘要、分类和标签；
+4. 分类点击后可以筛选文章；
+5. 分页可以切换；
+6. 移动端布局可用；
+7. 视觉尽量遵守文档里的 token 和卡片规范；
+8. 不要使用参考站的 Logo、品牌名、原文案和原图片。
+
+请输出一个完整可运行的 HTML 文件。
+</code></pre>
+<p>生成后，把代码保存为：</p>
+<pre><code class="language-text">copy_blog.html
+</code></pre>
+<h3>10.3 检查重点</h3>
+<p>打开 <code>copy_blog.html</code>，重点看：</p>
+<ul>
+<li>搜索是否能用</li>
+<li>分类是否能筛选</li>
+<li>分页是否能切换</li>
+<li>文章数据是否集中管理</li>
+<li>手机端菜单是否可用</li>
+<li>点击卡片是否有反馈</li>
+</ul>
+<p>即使视觉不完美也没关系。它的角色是行为样板。</p>
+<h2>11. 第八步：让 OpenCode 对比融合两个原型</h2>
+<h3>11.1 这一步的目的</h3>
+<p>现在你手里有两个原型：</p>
+<pre><code class="language-text">copy_blog_stitch.html：视觉更好
+copy_blog.html：交互更好
+</code></pre>
+<p>接下来不要手工乱抄。<br />
+让 OpenCode 对两份代码做系统对比，然后融合出最佳实现方案。</p>
+<h3>11.2 给 OpenCode 的提示词</h3>
+<pre><code class="language-text">请读取以下文件：
+
+1. frontend-design-plan.md
+2. blog-design-simple.md
+3. acceptance-checklist.md
+4. copy_blog_stitch.html
+5. copy_blog.html
+
+请完成一份完整系统的最佳实现方案，保存为：
+
+implementation-plan.md
+
+要求：
+
+1. 逐维度对比 copy_blog_stitch.html 和 copy_blog.html
+   - 视觉完成度
+   - 布局结构
+   - 组件完整性
+   - 搜索交互
+   - 分类筛选
+   - 分页
+   - 移动端
+   - 代码结构
+   - 可维护性
+
+2. 提取两份文件各自最佳实践
+   - Stitch 版本有哪些视觉细节值得保留
+   - Gemini 版本有哪些交互逻辑值得保留
+
+3. 融合出一套完整组件体系
+   - Header
+   - 侧边栏
+   - 搜索
+   - 分类按钮
+   - 文章卡片
+   - 分页器
+   - Footer
+
+4. 每个组件说明：
+   - 结构
+   - 样式来源
+   - 交互来源
+   - 状态
+   - 响应式行为
+   - 实现注意事项
+
+5. 构建数据流架构
+   - 如果做静态 HTML，说明文章数组如何驱动渲染
+   - 如果做 Nuxt，说明 Nuxt Content -&gt; Store -&gt; composable -&gt; 渲染层的链路
+   - 如果做 React 或 Next，也给出可替代数据流
+
+6. 生成三端响应式行为矩阵
+   - 断点
+   - 布局
+   - 列数
+   - 侧边栏
+   - 搜索框
+   - 分页器
+
+7. 说明对 frontend-design-plan.md 原案的调整理由
+   - 哪些功能暂缓
+   - 哪些组件保留
+   - 哪些视觉细节来自 Stitch
+   - 哪些交互来自 Gemini
+   - 哪些地方是综合判断
+
+8. 最后给出最终实现建议
+   - 小白版：单文件 HTML + CSS + JS
+   - 进阶版：Nuxt 或 Next 组件化工程
+</code></pre>
+<h3>11.3 你应该得到什么</h3>
+<p><code>implementation-plan.md</code> 应该回答：</p>
+<ul>
+<li>最终页面采用谁的视觉</li>
+<li>最终页面采用谁的交互</li>
+<li>哪些代码需要重写</li>
+<li>哪些组件可以保留</li>
+<li>哪些功能第一版先不做</li>
+<li>最终实现应该如何组织</li>
+</ul>
+<p>它相当于“施工图”。</p>
+<h2>12. 第九步：生成最终页面</h2>
+<h3>12.1 小白版：生成单文件 HTML</h3>
+<p>如果你是新手，建议先做单文件版本。<br />
+也就是一个 HTML 文件里包含：</p>
+<ul>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>示例文章数据</li>
+</ul>
+<p>给 OpenCode 的提示词：</p>
+<pre><code class="language-text">请根据 implementation-plan.md 和 acceptance-checklist.md，生成最终可运行的单文件 Blog 首页：
+
+文件名：final-blog.html
+
+要求：
+
+1. 使用 HTML + CSS + JavaScript；
+2. 所有样式写在 style 标签中；
+3. 所有交互写在 script 标签中；
+4. 使用文章数组驱动页面渲染；
+5. 支持搜索；
+6. 支持分类筛选；
+7. 支持分页；
+8. 支持桌面、平板、手机响应式；
+9. 视觉优先参考 copy_blog_stitch.html；
+10. 交互优先参考 copy_blog.html；
+11. 严格按 acceptance-checklist.md 检查；
+12. 不使用参考站 Logo、品牌名、原文案和原图片。
+
+完成后请说明哪些验收项已经满足，哪些还有风险。
+</code></pre>
+<h3>12.2 进阶版：生成组件化工程</h3>
+<p>如果你已经会一点前端，可以继续让 OpenCode 生成 Nuxt 或 Next 版本。</p>
+<p>Nuxt 提示词：</p>
+<pre><code class="language-text">请根据 implementation-plan.md，把 final-blog.html 升级为 Nuxt 组件化实现。
+
+要求：
+
+1. 使用 Nuxt 3；
+2. 文章内容先用本地数组或 Nuxt Content；
+3. 拆分组件：
+   - BlogHeader.vue
+   - BlogSidebar.vue
+   - SearchBox.vue
+   - ArticleCard.vue
+   - Pagination.vue
+   - BlogFooter.vue
+4. 使用 composable 管理搜索、分类筛选和分页；
+5. 保留 blog-design-simple.md 中的 token；
+6. 保持桌面、平板、手机响应式；
+7. 不引入不必要的复杂依赖。
+</code></pre>
+<p>Next 提示词：</p>
+<pre><code class="language-text">请根据 implementation-plan.md，把 final-blog.html 升级为 Next.js 组件化实现。
+
+要求：
+
+1. 使用 App Router；
+2. 文章内容先用本地数据数组；
+3. 拆分组件：
+   - BlogHeader
+   - BlogSidebar
+   - SearchBox
+   - ArticleCard
+   - Pagination
+   - BlogFooter
+4. 使用 hooks 管理搜索、分类筛选和分页；
+5. 保留设计 token；
+6. 保持响应式；
+7. 不使用参考站品牌资产。
+</code></pre>
+<h2>13. 第十步：按验收清单检查</h2>
+<p>页面生成以后，不要只看第一眼。<br />
+请按照 <code>acceptance-checklist.md</code> 一项一项检查。</p>
+<h3>13.1 基础检查</h3>
+<p>打开最终页面，看：</p>
+<ul>
+<li>页面是否能正常打开</li>
+<li>是否有明显错位</li>
+<li>Header 是否完整</li>
+<li>搜索框是否出现</li>
+<li>分类是否出现</li>
+<li>文章卡片是否出现</li>
+<li>分页是否出现</li>
+<li>Footer 是否出现</li>
+</ul>
+<h3>13.2 交互检查</h3>
+<p>操作一下：</p>
+<ul>
+<li>输入关键词，文章是否变化</li>
+<li>点击分类，列表是否变化</li>
+<li>点击页码，是否切换文章</li>
+<li>搜索后分页是否重新计算</li>
+<li>分类筛选后分页是否重新计算</li>
+<li>清空搜索后文章是否恢复</li>
+</ul>
+<h3>13.3 响应式检查</h3>
+<p>把浏览器宽度调成三种：</p>
+<pre><code class="language-text">桌面端：大于 1024px
+平板端：768px 到 1023px
+手机端：小于 768px
+</code></pre>
+<p>检查：</p>
+<ul>
+<li>桌面端是否是多列</li>
+<li>平板端是否合理收缩</li>
+<li>手机端是否单列</li>
+<li>侧边栏是否不挤压正文</li>
+<li>搜索框是否不溢出</li>
+<li>分页是否不换行乱掉</li>
+</ul>
+<h3>13.4 品牌和版权检查</h3>
+<p>确认：</p>
+<ul>
+<li>没有使用原站 Logo</li>
+<li>没有使用原站品牌名</li>
+<li>没有复制原站文章全文</li>
+<li>没有直接搬原站图片</li>
+<li>文案已经换成自己的</li>
+<li>示例数据是虚构或你自己拥有版权的内容</li>
+</ul>
+<h2>14. 常见问题</h2>
+<h3>问题 1：为什么不直接让 AI 写 HTML</h3>
+<p>可以直接写，但容易得到一次性页面。<br />
+本文的方法先生成 Markdown 规格，是为了让每一步都可检查、可修改、可复用。</p>
+<p>简单说：</p>
+<pre><code class="language-text">HTML 是结果；
+Markdown 规格是方法；
+方法比一次结果更值钱。
+</code></pre>
+<h3>问题 2：为什么要同时用 Stitch 和 Gemini</h3>
+<p>因为它们擅长的方向不同。</p>
+<pre><code class="language-text">Stitch 更像视觉设计师；
+Gemini 更像交互原型师；
+OpenCode 更像前端架构师。
+</code></pre>
+<p>让不同工具做自己擅长的事，比期待一个工具全能更稳。</p>
+<h3>问题 3：如果 Stitch 生成的页面没有交互怎么办</h3>
+<p>没关系。<br />
+Stitch 的任务是提供视觉样板，不是完成全部功能。</p>
+<p>后面可以让 OpenCode 把 Gemini 的交互逻辑融合进去。</p>
+<h3>问题 4：如果 Gemini 生成的页面不好看怎么办</h3>
+<p>也没关系。<br />
+Gemini 的任务是提供搜索、分类、分页等行为样板。</p>
+<p>最终视觉以 Stitch 或你自己的设计文档为准。</p>
+<h3>问题 5：如果两个原型代码风格完全不同怎么办</h3>
+<p>不要强行拼接。<br />
+让 OpenCode 先写 <code>implementation-plan.md</code>，把两份代码拆成：</p>
+<ul>
+<li>哪些视觉值得保留</li>
+<li>哪些交互值得保留</li>
+<li>哪些代码需要重写</li>
+<li>哪些功能暂缓</li>
+</ul>
+<p>然后重新生成最终页面。</p>
+<h2>15. 最小可用快捷版</h2>
+<p>如果你时间很少，可以只走这个精简流程：</p>
+<pre><code class="language-text">1. 用 OpenCode 分析参考站，生成 reference-analysis.md
+2. 用 OpenCode 生成 blog-design-simple.md
+3. 用 OpenCode 生成 acceptance-checklist.md
+4. 把 blog-design-simple.md 上传 Stitch，生成 copy_blog_stitch.html
+5. 把 blog-design-simple.md 上传 Gemini，生成 copy_blog.html
+6. 用 OpenCode 对比两份 HTML，生成 implementation-plan.md
+7. 用 OpenCode 生成 final-blog.html
+8. 按 acceptance-checklist.md 检查
+</code></pre>
+<p>这已经足够做出一个质量不错的 Blog 首页。</p>
+<h2>16. 最终推荐提示词合集</h2>
+<h3>16.1 分析参考站</h3>
+<pre><code class="language-text">请从信息架构、布局结构、设计系统、组件规范、响应式策略、内容模型、SEO 和可访问性七个维度分析这个 Blog 页面。
+不要写代码，只输出可复用设计规律。
+保存为 reference-analysis.md。
+</code></pre>
+<h3>16.2 生成完整方案</h3>
+<pre><code class="language-text">请基于 reference-analysis.md，策划一个新的 Blog 前端设计方案。
+不要照搬原站品牌、Logo、文案和图片。
+包含页面路由、布局、设计 token、组件规范、响应式、技术栈和设计决策。
+保存为 frontend-design-plan.md。
+</code></pre>
+<h3>16.3 压缩为 MVP</h3>
+<pre><code class="language-text">请把 frontend-design-plan.md 压缩为小白可执行的 Blog 首页 MVP。
+只保留 Header、搜索、侧边栏、文章卡片、分页、Footer 和响应式。
+保存为 blog-design-simple.md。
+</code></pre>
+<h3>16.4 加密核心细节</h3>
+<pre><code class="language-text">请细化 blog-design-simple.md 中的布局结构、设计 token、组件规范、文章卡片细节和响应式行为。
+输出 CSS 变量、ASCII 布局图、组件状态和卡片尺寸规则。
+直接更新 blog-design-simple.md。
+</code></pre>
+<h3>16.5 生成验收清单</h3>
+<pre><code class="language-text">请基于 blog-design-simple.md 生成实现验收清单。
+覆盖视觉、组件、响应式、交互、数据、SEO、可访问性、性能、版权边界。
+保存为 acceptance-checklist.md。
+</code></pre>
+<h3>16.6 生成视觉原型</h3>
+<pre><code class="language-text">请根据 blog-design-simple.md，用 HTML + CSS 实现静态 Blog 首页。
+重点保证视觉完成度和响应式。
+不要使用参考站品牌资产。
+输出完整代码。
+</code></pre>
+<h3>16.7 生成交互原型</h3>
+<pre><code class="language-text">请根据 blog-design-simple.md，用 HTML + CSS + JavaScript 实现 Blog 首页原型。
+使用文章数组驱动页面，支持搜索、分类筛选和分页。
+不要使用参考站品牌资产。
+输出完整可运行 HTML。
+</code></pre>
+<h3>16.8 对比融合</h3>
+<pre><code class="language-text">请对比 copy_blog_stitch.html 和 copy_blog.html。
+提取 Stitch 的视觉最佳实践，提取 Gemini 的交互最佳实践。
+融合出组件体系、数据流、响应式矩阵和最终实现建议。
+保存为 implementation-plan.md。
+</code></pre>
+<h3>16.9 生成最终页面</h3>
+<pre><code class="language-text">请根据 implementation-plan.md 和 acceptance-checklist.md，生成 final-blog.html。
+要求使用 HTML + CSS + JavaScript，支持搜索、分类筛选、分页和响应式。
+视觉参考 copy_blog_stitch.html，交互参考 copy_blog.html。
+不要使用参考站品牌资产。
+</code></pre>
+<h2>17. 结论</h2>
+<p>这套方法的关键不是“会不会写代码”，而是“会不会把网站拆成规格”。</p>
+<p>最重要的顺序是：</p>
+<pre><code class="language-text">先放大：完整分析参考站，避免遗漏；
+再压缩：变成小白能落地的 MVP；
+再加密：细化最容易翻车的布局、token、卡片和响应式；
+再验收：生成清单，防止页面只是看起来像；
+最后实现：用不同模型互补，再让 OpenCode 融合。
+</code></pre>
+<p>如果你只记住一句话，就是：</p>
+<pre><code class="language-text">不要直接问 AI 要最终代码；
+先让 AI 生成可审查的设计规格；
+再用不同模型生成互补原型；
+最后对比融合，生成自己的最终页面。
+</code></pre>
+</article></main>
+</body>
+</html>

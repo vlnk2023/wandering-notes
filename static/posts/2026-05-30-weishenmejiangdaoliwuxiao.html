@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="你以为问题发生在道理层，但它往往发生在情绪、认知负荷、执行功能和安全感系统层。">
+<title>为啥讲道理无效--囤积症的深层心理机制分析 · Wandering Notes</title>
+<style>
+
+:root {
+  --bg:#f7f3eb;
+  --paper:#fffdf8;
+  --paper-strong:#fff8eb;
+  --ink:#201b16;
+  --muted:#70675c;
+  --quiet:#9b9184;
+  --line:#e6ded0;
+  --line-soft:#f0e8db;
+  --accent:#0e6f6d;
+  --accent-deep:#094d4b;
+  --accent-soft:#dff1ec;
+  --amber:#af6b1a;
+  --amber-soft:#f7e8c9;
+  --rose:#8b4738;
+  --shadow:0 20px 60px rgba(79,55,28,.11);
+  --shadow-soft:0 10px 26px rgba(79,55,28,.08);
+  --radius:22px;
+  --radius-md:16px;
+  --radius-sm:10px;
+}
+*,*::before,*::after { box-sizing:border-box }
+html { scroll-behavior:smooth }
+body {
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 8% -8%, rgba(14,111,109,.14), transparent 34rem),
+    radial-gradient(circle at 88% 8%, rgba(175,107,26,.15), transparent 28rem),
+    linear-gradient(180deg, #fbf6ec 0%, var(--bg) 42%, #f3eee5 100%);
+  font-family:"Noto Serif SC","Source Han Serif SC","LXGW WenKai","PingFang SC","Microsoft YaHei",serif;
+  font-size:16px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.52;
+  background-image:
+    linear-gradient(rgba(32,27,22,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32,27,22,.027) 1px, transparent 1px);
+  background-size:34px 34px;
+  mask-image:linear-gradient(180deg, rgba(0,0,0,.65), transparent 68%);
+}
+a { color:var(--accent); text-decoration:none; text-underline-offset:3px }
+a:hover { color:var(--accent-deep); text-decoration:underline }
+button,input,select { font:inherit }
+.sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+.topbar {
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid rgba(230,222,208,.78);
+  background:rgba(255,253,248,.82);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+.nav {
+  max-width:1120px;
+  min-height:64px;
+  margin:0 auto;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.brand {
+  flex:0 0 auto;
+  color:var(--ink);
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.01em;
+}
+.brand::before {
+  content:"";
+  display:inline-block;
+  width:9px;
+  height:9px;
+  margin-right:9px;
+  border-radius:99px;
+  background:var(--accent);
+  box-shadow:0 0 0 5px rgba(14,111,109,.12);
+  vertical-align:1px;
+}
+.nav a:not(.brand) {
+  color:var(--muted);
+  font-size:14px;
+  font-weight:700;
+  text-decoration:none;
+  padding:5px 0;
+  border-bottom:2px solid transparent;
+}
+.nav a:not(.brand):hover,
+.nav a.active {
+  color:var(--ink);
+  border-bottom-color:var(--accent);
+}
+.nav-search {
+  flex:1 1 520px;
+  max-width:560px;
+  margin-left:auto;
+}
+.nav-search-box {
+  position:relative;
+}
+.nav-search-box::before {
+  content:"⌕";
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--quiet);
+  font-size:20px;
+  z-index:1;
+}
+.nav-search #searchInput {
+  width:100%;
+  min-height:42px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,250,241,.94);
+  color:var(--ink);
+  outline:none;
+  padding:0 76px 0 44px;
+}
+.nav-search #searchInput:focus {
+  border-color:rgba(14,111,109,.55);
+  box-shadow:0 0 0 4px rgba(14,111,109,.12);
+}
+.nav-search-submit {
+  position:absolute;
+  right:5px;
+  top:5px;
+  min-height:32px;
+  padding:0 14px;
+  border:0;
+  border-radius:999px;
+  background:var(--ink);
+  color:#fffaf1;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:900;
+}
+.nav-search-submit:hover { background:var(--accent-deep) }
+.wrap,
+.home-shell {
+  width:min(1120px, 100%);
+  margin:0 auto;
+  padding:0 24px;
+}
+.post-wrap {
+  width:min(880px, 100%);
+  margin:0 auto;
+  padding:0 24px;
+}
+.post-hero {
+  padding:64px 0 34px;
+  text-align:center;
+}
+.post-hero h1 {
+  max-width:780px;
+  margin:0 auto 14px;
+  color:var(--ink);
+  font-size:clamp(30px, 5vw, 52px);
+  font-weight:900;
+  line-height:1.16;
+  letter-spacing:-.045em;
+}
+.post-hero .date {
+  display:block;
+  color:var(--quiet);
+  font-size:14px;
+  margin-bottom:16px;
+}
+.tags {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.tag,
+.mini-tag,
+.filter-pill {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid rgba(14,111,109,.16);
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  font-size:13px;
+  font-weight:700;
+  line-height:1;
+  text-decoration:none;
+}
+.tag { padding:7px 12px }
+.mini-tag { padding:6px 10px }
+.tag:hover,
+.mini-tag:hover {
+  color:var(--accent-deep);
+  background:#cfe9e3;
+  text-decoration:none;
+}
+.article {
+  max-width:760px;
+  margin:0 auto 56px;
+  padding:32px clamp(20px, 4vw, 42px);
+  border:1px solid rgba(230,222,208,.9);
+  border-radius:var(--radius);
+  background:rgba(255,253,248,.88);
+  box-shadow:var(--shadow-soft);
+}
+.article h2 {
+  margin:44px 0 16px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line-soft);
+  color:var(--ink);
+  font-size:26px;
+  font-weight:900;
+  line-height:1.35;
+  letter-spacing:-.025em;
+}
+.article h2:first-child { margin-top:0 }
+.article h3 {
+  margin:34px 0 12px;
+  color:var(--ink);
+  font-size:21px;
+  font-weight:800;
+}
+.article h4 {
+  margin:26px 0 10px;
+  color:var(--ink);
+  font-size:17px;
+  font-weight:800;
+}
+.article p { margin:0 0 18px; color:var(--muted); line-height:1.86 }
+.article ul,
+.article ol { margin:0 0 20px; padding-left:26px; color:var(--muted) }
+.article li { margin-bottom:7px }
+.article li > ul,
+.article li > ol { margin-bottom:0 }
+.article hr { border:none; border-top:1px solid var(--line); margin:38px 0 }
+.article code {
+  border:1px solid #e6dac8;
+  border-radius:8px;
+  background:#f3eadb;
+  padding:2px 6px;
+  color:#3b2e20;
+  font-family:"JetBrains Mono","Fira Code","Cascadia Code",Consolas,monospace;
+  font-size:.9em;
+}
+.article pre {
+  margin:0 0 22px;
+  padding:18px 20px;
+  overflow-x:auto;
+  border:1px solid #e3d7c4;
+  border-radius:var(--radius-md);
+  background:#f4ecdf;
+  font-size:14px;
+  line-height:1.65;
+}
+.article pre code { border:none; background:transparent; padding:0; font-size:inherit }
+.article blockquote {
+  margin:0 0 24px;
+  padding:16px 20px;
+  border-left:4px solid var(--accent);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  background:rgba(223,241,236,.7);
+  color:var(--muted);
+}
+.article blockquote p { margin:0; color:inherit }
+.article blockquote p + p { margin-top:10px }
+.article table {
+  width:100%;
+  margin:0 0 24px;
+  border-collapse:collapse;
+  font-size:14px;
+}
+.article th,
+.article td {
+  border:1px solid var(--line);
+  padding:10px 14px;
+  text-align:left;
+  vertical-align:top;
+}
+.article th {
+  background:var(--paper-strong);
+  color:var(--ink);
+  font-weight:800;
+}
+.article td { color:var(--muted) }
+.article img {
+  display:block;
+  max-width:100%;
+  margin:12px 0;
+  border:1px solid var(--line);
+  border-radius:var(--radius-md);
+}
+.post-actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px auto 0;
+}
+.post-action-group {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.post-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 14px;
+  border:1px solid rgba(14,111,109,.18);
+  border-radius:999px;
+  background:rgba(255,253,248,.86);
+  color:var(--accent-deep);
+  box-shadow:0 8px 22px rgba(79,55,28,.08);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+}
+.post-action:hover {
+  transform:translateY(-1px);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.post-action.secondary {
+  border-color:var(--line);
+  color:var(--muted);
+}
+.post-action.secondary:hover {
+  color:var(--ink);
+  background:#fffaf1;
+}
+.side-card,
+.post-card {
+  border:1px solid rgba(230,222,208,.9);
+  background:rgba(255,253,248,.86);
+  box-shadow:var(--shadow-soft);
+}
+.facet-chip,
+.filter-pill button {
+  border:none;
+  cursor:pointer;
+}
+.content-grid {
+  display:grid;
+  grid-template-columns:220px minmax(0, 1fr);
+  gap:22px;
+  align-items:start;
+  padding:28px 0 64px;
+}
+.sidebar {
+  position:sticky;
+  top:86px;
+  display:grid;
+  gap:16px;
+}
+.side-card {
+  border-radius:18px;
+  padding:14px;
+}
+.side-card h2 {
+  margin:0 0 10px;
+  color:var(--muted);
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.02em;
+}
+.facet-chip {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fffaf1;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+}
+.facet-chip:hover,
+.facet-chip.active {
+  border-color:rgba(14,111,109,.24);
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+}
+.facet-chip span {
+  color:var(--quiet);
+  font-size:12px;
+  font-weight:800;
+}
+.archive-stack {
+  display:grid;
+  gap:8px;
+}
+.archive-button {
+  width:100%;
+  justify-content:space-between;
+  border-radius:14px;
+}
+.active-filters {
+  min-height:31px;
+  margin:0 0 14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.filter-pill {
+  padding:7px 9px 7px 12px;
+  background:var(--amber-soft);
+  color:#6d4113;
+  border-color:rgba(175,107,26,.2);
+}
+.filter-pill button {
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(109,65,19,.12);
+  color:#6d4113;
+  font-weight:900;
+}
+.month-section {
+  margin:0 0 28px;
+}
+.month-title {
+  margin:0 0 12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:var(--muted);
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+.month-title::after {
+  content:"";
+  height:1px;
+  flex:1;
+  background:var(--line);
+}
+.month-title span:last-child {
+  color:var(--quiet);
+  font-weight:800;
+}
+.post-list {
+  display:grid;
+  gap:14px;
+}
+.post-card {
+  border-radius:var(--radius);
+  padding:22px;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.post-card:hover {
+  transform:translateY(-2px);
+  border-color:rgba(14,111,109,.22);
+  box-shadow:var(--shadow);
+}
+.post-meta {
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  align-items:center;
+  margin-bottom:10px;
+  color:var(--quiet);
+  font-size:13px;
+  font-weight:800;
+}
+.dot::before {
+  content:"";
+  display:inline-block;
+  width:4px;
+  height:4px;
+  margin:0 9px 2px 0;
+  border-radius:999px;
+  background:var(--line);
+}
+.post-title {
+  display:inline;
+  color:var(--ink);
+  font-size:23px;
+  font-weight:900;
+  line-height:1.28;
+  letter-spacing:-.025em;
+  text-decoration:none;
+}
+.post-title:hover { color:var(--accent-deep); text-decoration:none }
+.post-summary {
+  margin:10px 0 0;
+  color:var(--muted);
+  line-height:1.75;
+}
+.post-tags {
+  margin-top:14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+mark {
+  border-radius:5px;
+  background:#ffe39b;
+  color:inherit;
+  padding:0 2px;
+}
+.empty {
+  padding:56px 24px;
+  border:1px dashed var(--line);
+  border-radius:var(--radius);
+  background:rgba(255,253,248,.68);
+  color:var(--muted);
+  text-align:center;
+}
+.empty strong {
+  display:block;
+  margin-bottom:6px;
+  color:var(--ink);
+  font-size:20px;
+}
+.empty[hidden] { display:none }
+@media (max-width:900px) {
+  .content-grid {
+    grid-template-columns:1fr;
+    padding-top:18px;
+  }
+  .sidebar {
+    position:static;
+  }
+  .sidebar {
+    display:block;
+  }
+  .archive-stack { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:thin }
+  .archive-button { width:auto; flex:0 0 auto }
+}
+@media (max-width:680px) {
+  .nav { min-height:0; padding:10px 18px; gap:10px 14px; flex-wrap:wrap }
+  .nav-search { order:3; flex-basis:100%; max-width:none; margin-left:0 }
+  .home-shell,
+  .wrap,
+  .post-wrap { padding:0 18px }
+  .content-grid { gap:14px; padding-top:14px }
+  .side-card { margin:0 -2px; padding:12px; border-radius:16px }
+  .side-card h2 { font-size:14px }
+  .active-filters { min-height:0 }
+  .post-card { padding:18px }
+  .post-title { font-size:20px }
+  .article { padding:24px 18px }
+  .post-hero { padding:40px 0 26px }
+}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <nav class="nav" aria-label="主导航">
+    <a class="brand" href="/posts">Wandering Notes</a>
+    <form class="nav-search" id="navSearchForm" action="/posts" method="get" role="search">
+      <label class="sr-only" for="searchInput">全文搜索</label>
+      <div class="nav-search-box">
+        <input id="searchInput" name="q" type="search" placeholder="搜索标题、正文、标签..." autocomplete="off">
+        <button class="nav-search-submit" type="submit">搜索</button>
+      </div>
+    </form>
+    <a class="active" href="/posts">笔记</a>
+    <a href="/cognitive-map">认知地图</a>
+  </nav>
+</header>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a><a class="post-action secondary" href="/edit?path=data%2Fposts%2F2026-05-30-weishenmejiangdaoliwuxiao.md&amp;slug=2026-05-30-weishenmejiangdaoliwuxiao">编辑本文</a></div></nav><div class="post-hero"><h1>为啥讲道理无效--囤积症的深层心理机制分析</h1><time class="date" datetime="2026-05-30">2026-05-30</time><div class="tags"><a class="tag" href="/posts?tag=%E5%BF%83%E7%90%86%E5%AD%A6">#心理学</a></div></div><article class="article"><h1>第 4 讲：为什么讲道理无效</h1>
+<h2>1. 本讲目标</h2>
+<p>这一讲解释一个常见挫败：</p>
+<pre><code class="language-text">为什么明明道理很简单，对方就是不整理、不丢、不改变？
+</code></pre>
+<p>答案不是“他听不懂”，而是：</p>
+<pre><code class="language-text">你以为问题发生在道理层，
+但它往往发生在情绪、认知负荷、执行功能和安全感系统层。
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/vlnk2023/wandering-notes/main/data/posts/image.png" alt="alt text" /></p>
+<p>学完本讲，学员应能：</p>
+<ol>
+<li>理解劝说为什么经常失败。</li>
+<li>掌握囤积和空间防御背后的认知负荷链。</li>
+<li>区分价值说服、情绪安抚和认知支架。</li>
+<li>学会把“讲道理”替换成“降负荷、给支架、做小实验”。</li>
+</ol>
+<h2>2. 讲道理无效的第一原因：物品不是物品</h2>
+<p>当一个物品只是物品时，判断很简单：</p>
+<pre><code class="language-text">有没有用？
+要不要留？
+放在哪里？
+</code></pre>
+<p>但当物品承载安全、记忆、责任、关系和未来选项时，它就不再是普通物品。</p>
+<p>丢弃可能被体验为：</p>
+<ul>
+<li>丢掉未来可能性。</li>
+<li>背叛过去。</li>
+<li>否定某段关系。</li>
+<li>放弃安全储备。</li>
+<li>承认自己曾经浪费。</li>
+<li>承担不可逆后悔。</li>
+</ul>
+<p>所以一句“这又没用”会失败，因为对方听到的可能是：</p>
+<pre><code class="language-text">你的记忆没用。
+你的安全感没用。
+你的担心没用。
+你这个人太荒唐。
+</code></pre>
+<h2>3. 第二原因：每件物品都变成高负荷判断</h2>
+<p>普通整理依赖类别判断：</p>
+<pre><code class="language-text">同类集中
+常用留下
+重复减少
+低频集中
+无用退出
+</code></pre>
+<p>但囤积困扰中，经常进入逐件审判：</p>
+<pre><code class="language-text">这个什么时候买的？
+以后会不会用到？
+是不是某个人送的？
+如果丢了后悔怎么办？
+能不能修？
+别人会不会需要？
+是不是浪费？
+</code></pre>
+<p>结果是：</p>
+<pre><code class="language-text">整理不再是体力活，
+而变成一连串高强度决策任务。
+</code></pre>
+<p>这时讲道理只会增加判断负担。</p>
+<h2>4. 第三原因：不确定性无法被容忍</h2>
+<p>很多囤积判断的默认规则是：</p>
+<pre><code class="language-text">不确定 → 先留着
+</code></pre>
+<p>这不是完全没逻辑。因为“保留”在短期看最安全：</p>
+<table>
+<thead>
+<tr>
+  <th>选择</th>
+  <th>短期体验</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>丢掉</td>
+  <td>可能后悔、焦虑、内疚</td>
+</tr>
+<tr>
+  <td>留着</td>
+  <td>立刻避免损失感</td>
+</tr>
+</tbody>
+</table>
+<p>所以保留会被不断强化。</p>
+<p>真正要改变的不是说服对方“它没用”，而是降低不确定性的威胁。</p>
+<h2>5. 第四原因：执行功能断线</h2>
+<p>整理是一串复杂任务：</p>
+<pre><code class="language-text">看见物品
+→ 判断类别
+→ 回忆用途
+→ 比较价值
+→ 决定去留
+→ 放到对应位置
+→ 继续下一个
+</code></pre>
+<p>如果有抑郁、ADHD、焦虑、疲惫或长期压力，这条链很容易断。</p>
+<p>表现为：</p>
+<ul>
+<li>开始不了。</li>
+<li>开始后被细节带走。</li>
+<li>越整理越乱。</li>
+<li>每个物品都要想很久。</li>
+<li>无法收尾。</li>
+<li>一想到整理就崩溃。</li>
+</ul>
+<p>这时“你赶紧收拾一下”没有用，因为问题不是不知道该收拾，而是启动系统和收尾系统都失灵了。</p>
+<h2>6. 第五原因：羞耻会让系统更关闭</h2>
+<p>羞辱式语言包括：</p>
+<ul>
+<li>你怎么这么懒。</li>
+<li>这都是垃圾。</li>
+<li>正常人谁这样。</li>
+<li>你就不能狠心一点吗。</li>
+<li>我帮你全扔了算了。</li>
+</ul>
+<p>这些话会造成三种后果：</p>
+<pre><code class="language-text">羞耻上升
+→ 回避上升
+→ 更不敢面对空间
+</code></pre>
+<p>如果对方本来就处在抑郁、创伤或不安全关系中，羞耻会进一步削弱行动能力。</p>
+<h2>7. 替代策略：从讲道理到给支架</h2>
+<p>不要先说服，先降负荷。</p>
+<table>
+<thead>
+<tr>
+  <th>无效做法</th>
+  <th>更好做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>这个没用，扔了</td>
+  <td>我们先按类别放一起，不马上决定</td>
+</tr>
+<tr>
+  <td>你别想那么多</td>
+  <td>先设一个待判断箱，7 天后再看</td>
+</tr>
+<tr>
+  <td>你太乱了</td>
+  <td>我们先恢复床/门口/卫生间一个功能</td>
+</tr>
+<tr>
+  <td>你就是舍不得</td>
+  <td>这个物品保留的是功能、记忆还是安全感</td>
+</tr>
+<tr>
+  <td>我替你扔</td>
+  <td>哪些东西你允许我帮你移动到临时区</td>
+</tr>
+</tbody>
+</table>
+<h2>8. 认知支架的四个原则</h2>
+<h2>8.1 减少单件判断</h2>
+<p>不要一件一件问：</p>
+<pre><code class="language-text">这个要不要？
+那个要不要？
+</code></pre>
+<p>改成类别规则：</p>
+<pre><code class="language-text">所有过期食品直接退出。
+重复物品保留状态最好的 2 个。
+包装盒最多保留一个箱子。
+</code></pre>
+<h2>8.2 使用默认规则</h2>
+<p>在高负荷状态下，不要让每个决定都重新发明规则。</p>
+<p>示例：</p>
+<pre><code class="language-text">一年没用且可低成本再买 → 退出。
+坏了一年没修 → 退出。
+没有明确用途的包装 → 进入观察箱。
+</code></pre>
+<h2>8.3 允许可逆中间状态</h2>
+<p>直接丢弃威胁太高，可以先：</p>
+<ul>
+<li>临时箱。</li>
+<li>待判断区。</li>
+<li>7 天观察。</li>
+<li>拍照留念。</li>
+<li>象征物保留。</li>
+</ul>
+<h2>8.4 外部陪伴维持任务轨道</h2>
+<p>陪伴者的作用不是替他扔，而是帮助任务不断线：</p>
+<pre><code class="language-text">我们现在只处理这一类。
+我们先不决定纪念品。
+我们今天只做 15 分钟。
+你不用解释每一个物品。
+</code></pre>
+<h2>9. 课堂练习：把劝说改成支架</h2>
+<p>把下面的话改写：</p>
+<table>
+<thead>
+<tr>
+  <th>原句</th>
+  <th>改写</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>这些都是垃圾</td>
+  <td></td>
+</tr>
+<tr>
+  <td>你怎么什么都舍不得</td>
+  <td></td>
+</tr>
+<tr>
+  <td>你再不整理就完了</td>
+  <td></td>
+</tr>
+<tr>
+  <td>我帮你全扔了</td>
+  <td></td>
+</tr>
+<tr>
+  <td>这有什么好纠结的</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+<p>参考方向：</p>
+<pre><code class="language-text">先确认功能，再降低任务，再给可逆选择。
+</code></pre>
+<h2>10. 课后作业</h2>
+<p>找一个你一直卡住的整理任务，写出：</p>
+<pre><code class="language-text">1. 它到底卡在启动、分类、判断、丢弃还是收尾？
+2. 我能不能把它从“全屋整理”缩小成一个 15 分钟任务？
+3. 我能不能先设一个待判断箱，而不是立刻丢？
+4. 我能不能给这类物品设置一个数量上限？
+</code></pre>
+<h2>11. 本讲总结</h2>
+<pre><code class="language-text">讲道理无效，不是因为人不讲理。
+而是因为问题发生在安全感、认知负荷、执行功能和羞耻系统里。
+真正有效的帮助，是降低威胁、减少判断、建立支架、保留选择。
+</code></pre>
+</article></main>
+</body>
+</html>

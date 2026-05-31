@@ -7,6 +7,7 @@ Usage:
   python3 scripts/new-post.py my-new-post           # create with slug only
   python3 scripts/new-post.py my-new-post "标题"    # create with slug + title
 """
+import json
 import re
 import sys
 from pathlib import Path
@@ -46,10 +47,11 @@ if filepath.exists():
         sys.exit(0)
 
 content = f"""---
-title: {title or "笔记标题"}
+title: {json.dumps(title or "笔记标题", ensure_ascii=False)}
 date: {today}
 tags: []
-summary: ""
+summary: >-
+  在这里写一句摘要（可包含引号）
 ---
 
 ## 正文
