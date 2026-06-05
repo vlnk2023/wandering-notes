@@ -1,6 +1,36 @@
 {
   "posts": [
     {
+      "slug": "2026-06-05-mianfeitushuruanjian",
+      "title": "免费图书软件AI搜索",
+      "date": "2026-06-05",
+      "summary": "一款基于AI技术的跨平台电子书阅读器",
+      "tags": [
+        "免费工具"
+      ],
+      "month": "2026-06",
+      "monthLabel": "2026年6月",
+      "readingTime": 1,
+      "content": "正文 https://github.com/codedogQBY/ReadAny 一款基于AI技术的跨平台电子书阅读器，支持多种电子书格式，包括EPUB、PDF、MOBI等，提供智能聊天、语义搜索、即时翻译等功能。 可以通过AI直接提问，获取答案并定位信息来源，避免传统阅读中常见的笔记分散和信息检索困难的问题。",
+      "searchText": "免费图书软件ai搜索 2026-06-05 一款基于ai技术的跨平台电子书阅读器 免费工具 正文 https://github.com/codedogqby/readany 一款基于ai技术的跨平台电子书阅读器，支持多种电子书格式，包括epub、pdf、mobi等，提供智能聊天、语义搜索、即时翻译等功能。 可以通过ai直接提问，获取答案并定位信息来源，避免传统阅读中常见的笔记分散和信息检索困难的问题。",
+      "sourcePath": "data/posts/2026-06-05-mianfeitushuruanjian.md"
+    },
+    {
+      "slug": "2026-06-05-markdown",
+      "title": "一款将任何网页的主要内容转换为Markdown格式的工具",
+      "date": "2026-06-05",
+      "summary": "一款将任何网页的主要内容转换为Markdown格式的工具\"",
+      "tags": [
+        "免费工具"
+      ],
+      "month": "2026-06",
+      "monthLabel": "2026年6月",
+      "readingTime": 1,
+      "content": "正文 网站名称：Defuddle ⭐ 网站功能：网页转Markdown 📁 网站简介：一款将任何网页的主要内容转换为Markdown格式的工具。只需输入所需页面的URL，Defuddle便会提取该页面的核心信息，并以Markdown格式呈现。 还提供了API接口，可以通过curl命令直接获取Markdown内容。还开发了浏览器扩展，特别适用于Obsidian Web Clipper，能够在本地运行并支持访问任何可用网站，包括私有内容或JavaScript渲染的页面。 🔗 网站链接：点击打开 (https://defuddle.md/)",
+      "searchText": "一款将任何网页的主要内容转换为markdown格式的工具 2026-06-05 一款将任何网页的主要内容转换为markdown格式的工具\" 免费工具 正文 网站名称：defuddle ⭐ 网站功能：网页转markdown 📁 网站简介：一款将任何网页的主要内容转换为markdown格式的工具。只需输入所需页面的url，defuddle便会提取该页面的核心信息，并以markdown格式呈现。 还提供了api接口，可以通过curl命令直接获取markdown内容。还开发了浏览器扩展，特别适用于obsidian web clipper，能够在本地运行并支持访问任何可用网站，包括私有内容或javascript渲染的页面。 🔗 网站链接：点击打开 (https://defuddle.md/)",
+      "sourcePath": "data/posts/2026-06-05-markdown.md"
+    },
+    {
       "slug": "2026-06-05-guanfeixiazaibooks",
       "title": "免费电子图书馆网站",
       "date": "2026-06-05",
@@ -298,19 +328,6 @@
       "sourcePath": "data/posts/2026-05-15-emo1.md"
     },
     {
-      "slug": "2026-05-06-no",
-      "title": "ni",
-      "date": "2026-05-06",
-      "summary": "正文 在此处开始写笔记...",
-      "tags": [],
-      "month": "2026-05",
-      "monthLabel": "2026年5月",
-      "readingTime": 1,
-      "content": "正文 在此处开始写笔记...",
-      "searchText": "ni 2026-05-06 正文 在此处开始写笔记... 正文 在此处开始写笔记...",
-      "sourcePath": "data/posts/2026-05-06-no.md"
-    },
-    {
       "slug": "2026-05-06-bushufanyiyinqing",
       "title": "在 Windows 11 的 WSL2 中部署 LibreTranslate",
       "date": "2026-05-06",
@@ -452,5 +469,5 @@
       "sourcePath": "data/posts/多源事件聚合-语义分类和增量构建的实现思路.md"
     }
   ],
-  "count": 28
+  "count": 29
 }
