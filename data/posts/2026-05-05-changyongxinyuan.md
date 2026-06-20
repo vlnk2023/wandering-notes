@@ -18,6 +18,7 @@ https://semagram.io
 你可以通过在查询中添加 kind：type来按实体类型进行筛选（例如 kind：channel、kind：group 或 kind:bot）。或者只需在查询中注明类型，语义搜索就能处理。
 您可以通过在查询中添加min_users：N和/或max_users：N（例如min_users：1000、maX_users：50000)按订阅者/会员数量筛选。
 你可以输入@username（不加额外文字，但用@开头）来搜索相似的项目。
+
 ## 常用新闻信源搜集
 
 
