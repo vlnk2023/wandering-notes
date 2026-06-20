@@ -10,6 +10,13 @@ tags:
 summary: 常用新闻信源与工具搜集整理，包括 Telegram 频道、新闻网站及营销案例研究资源。
 ---
 
+## 最好用的全世界tg频道搜索
+
+https://semagram.io/?q=Codex%20Computer%20Use
+你可以通过在查询中添加 lang：code（使用ISO 639-1 代码，例如 lang：en 或 lang：ru）来缩小搜索范围到单一语言。
+你可以通过在查询中添加 kind：type来按实体类型进行筛选（例如 kind：channel、kind：group 或 kind:bot）。或者只需在查询中注明类型，语义搜索就能处理。
+您可以通过在查询中添加min_users：N和/或max_users：N（例如min_users：1000、maX_users：50000)按订阅者/会员数量筛选。
+你可以输入@username（不加额外文字，但用@开头）来搜索相似的项目。
 ## 常用新闻信源搜集
 
 
