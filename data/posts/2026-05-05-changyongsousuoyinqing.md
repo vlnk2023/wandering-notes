@@ -37,3 +37,5 @@ https://shadowlibraries.github.io/DirectDownloads/AnnasArchive/  影子图书馆
 
 后续考虑如何利用这些引擎命令行接入bash脚本，自动解析或者接入tg内自动推送使用，作为知识库构建的系统基础框架。
 
+https://blog.sandtears.com/
+这个网站我想模仿实现，简洁大方，核心模块都是我想要的。而且内容质量也很高
