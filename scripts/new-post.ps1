@@ -11,12 +11,15 @@ $script = Join-Path $root "scripts\new-post.py"
 Set-Location $root
 
 function Is-InRebase {
-  return (git rev-parse --verify REBASE_HEAD 2>$null) -ne $null
+  try { $gitDir = git rev-parse --git-dir } catch { return $false }
+  if (-not $gitDir) { return $false }
+  return (Test-Path (Join-Path $gitDir "rebase-merge")) -or
+         (Test-Path (Join-Path $gitDir "rebase-apply"))
 }
 
 function Abort-Rebase {
   if (Is-InRebase) {
-    git rebase --abort 2>$null
+    try { git rebase --abort } catch { }
     Write-Host "  [FIX] Rebase aborted."
   }
 }
@@ -123,7 +126,7 @@ for ($i = 1; $i -le $maxRetries; $i++) {
     Abort-Rebase
     if ($stashed) {
       Write-Host "  Attempting to restore stashed changes..."
-      git stash pop 2>$null
+      try { git stash pop } catch { }
       if ($LASTEXITCODE -ne 0) {
         Write-Host "[ERROR] Stash pop also failed. Your changes are in stash."
         Write-Host "  Run 'git stash list' then 'git stash pop' after resolving."
@@ -134,12 +137,11 @@ for ($i = 1; $i -le $maxRetries; $i++) {
 
   # Restore stashed changes
   if ($stashed) {
-    git stash pop 2>$null
+    try { git stash pop } catch { }
     if ($LASTEXITCODE -ne 0) {
       Write-Host "[WARN] Stash pop has conflicts. Your commit is still local."
       Write-Host "  Conflicts are in working tree. Resolve them, then run 'git push'."
       Write-Host "  Stash entry preserved: run 'git stash list' to check."
-      # Don't exit - commit is valid, user can push after resolving
     }
   }
 }
