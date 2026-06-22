@@ -24,12 +24,56 @@ function Abort-Rebase {
   }
 }
 
+function Has-WorkingTreeChanges {
+  $status = git status --porcelain
+  return -not [string]::IsNullOrWhiteSpace(($status | Out-String))
+}
+
 function Invoke-GitPull {
   $env:GIT_EDITOR = "true"
-  try { git pull --rebase } catch { }
+  $output = & git pull --rebase 2>&1
   $code = $LASTEXITCODE
   $env:GIT_EDITOR = $null
-  return $code
+  return @{
+    Success = ($code -eq 0)
+    ExitCode = $code
+    Output = ($output | Out-String).Trim()
+  }
+}
+
+function Invoke-PullWithAutoStash {
+  $stashed = $false
+  if (Has-WorkingTreeChanges) {
+    Write-Host "  [INFO] Local changes detected. Stashing before pull..."
+    $stashOutput = & git stash push -u -m "auto-stash before initial pull" 2>&1
+    $stashed = $LASTEXITCODE -eq 0
+    if (-not $stashed) {
+      return @{
+        Success = $false
+        Output = ($stashOutput | Out-String).Trim()
+        Stashed = $false
+      }
+    }
+  }
+
+  $pullResult = Invoke-GitPull
+
+  if ($stashed) {
+    Write-Host "  [INFO] Restoring stashed changes..."
+    $stashPopOutput = & git stash pop 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      Write-Host "  [WARN] Stash pop has conflicts."
+      if ($stashPopOutput) {
+        Write-Host ($stashPopOutput | Out-String).Trim()
+      }
+    }
+  }
+
+  return @{
+    Success = $pullResult.Success
+    Output = $pullResult.Output
+    Stashed = $stashed
+  }
 }
 
 function Test-PushRejected {
@@ -45,13 +89,20 @@ function Test-PushRejected {
 
 # --- Step 1: Pull ---
 Write-Host "[1/4] Pulling latest from GitHub..."
-if ((Invoke-GitPull) -ne 0) {
-  Write-Host "  [WARN] Pull failed, aborting rebase..."
-  Abort-Rebase
-  Write-Host "  Retrying pull..."
-  if ((Invoke-GitPull) -ne 0) {
-    Write-Host "  [ERROR] Pull failed again. Please resolve manually."
+$pullResult = Invoke-PullWithAutoStash
+if (-not $pullResult.Success) {
+  if (Is-InRebase) {
+    Write-Host "  [WARN] Pull failed during an in-progress rebase. Aborting and retrying once..."
     Abort-Rebase
+    $pullResult = Invoke-PullWithAutoStash
+  }
+
+  if (-not $pullResult.Success) {
+    Write-Host "  [ERROR] git pull --rebase failed."
+    if ($pullResult.Output) {
+      Write-Host $pullResult.Output
+    }
+    Write-Host "  Please resolve manually, then rerun the script."
     exit 1
   }
 }
@@ -86,7 +137,7 @@ if ($commitMsg -eq "") { $commitMsg = "post-new" }
 
 Write-Host "`nCommitting and pushing..."
 git add -A
-git commit --no-edit -m $commitMsg
+git commit -m $commitMsg
 if ($LASTEXITCODE -ne 0) {
   Write-Host "`n[DONE] Nothing to commit."
   return
@@ -121,8 +172,12 @@ for ($i = 1; $i -le $maxRetries; $i++) {
   }
 
   # Pull with rebase
-  if ((Invoke-GitPull) -ne 0) {
+  $pullResult = Invoke-GitPull
+  if (-not $pullResult.Success) {
     Write-Host "[ERROR] Rebase failed during retry."
+    if ($pullResult.Output) {
+      Write-Host $pullResult.Output
+    }
     Abort-Rebase
     if ($stashed) {
       Write-Host "  Attempting to restore stashed changes..."
