@@ -26,7 +26,7 @@ function Abort-Rebase {
 
 function Invoke-GitPull {
   $env:GIT_EDITOR = "true"
-  git pull --rebase
+  try { git pull --rebase } catch { }
   $code = $LASTEXITCODE
   $env:GIT_EDITOR = $null
   return $code
