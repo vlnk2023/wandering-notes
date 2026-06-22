@@ -39,3 +39,9 @@ https://shadowlibraries.github.io/DirectDownloads/AnnasArchive/  影子图书馆
 
 https://blog.sandtears.com/
 这个网站我想模仿实现，简洁大方，核心模块都是我想要的。而且内容质量也很高
+
+
+https://www.stcn.com/  这个网站内有可能搜索到顶级投资的底层逻辑链条。比如，证券时报报道把他的模式概括为“导师+学生”的天使投资，称其出资鼓励学生创业，并在2014年前后设立清水湾创投、XBOT PARK基金，投资阶段以种子轮、天使轮、A轮为主。
+
+
+
