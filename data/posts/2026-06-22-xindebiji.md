@@ -36,7 +36,9 @@ summary: >-
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
-基于 RAG（检索增强生成）的严格闭源知识库模式。通过输入架构文档与业务需求，利用其强行对齐源文本的能力，发现设计逻辑中的“幻觉”、前后矛盾或未覆盖的边缘case（Edge Cases）。
+Codex负责将宏观的“框架骨架”转化为可执行的“原子化任务流”，并以资深工程师的视角提供设计模式选择与技术选型建议。
+
+NotebookLM基于 RAG（检索增强生成）的严格闭源知识库模式。通过输入架构文档与业务需求，利用其强行对齐源文本的能力，发现设计逻辑中的“幻觉”、前后矛盾或未覆盖的边缘case（Edge Cases）。
 
 ### 工具协作矩阵
 
@@ -155,7 +157,116 @@ opencode
 
 ---
 
+针对这两个具体工程点的落地实施，以下是基于当前主流开源工具链与 API 架构的工程实现方案：
 
+---
+
+## 一、 数据平面的统一：自动化反馈链的工程实现
+
+NotebookLM 目前缺乏开放的 API，因此该链路的自动化需要结合**半自动导出/结构化转换**与 **Continue 的配置文件动态加载**。
+
+### 1. 资产提取与标准化（NotebookLM → Markdown）
+
+1. **导出：** 在 NotebookLM 的右侧笔记栏中，将“盲点分析”或“矛盾点提示”集成导出为单份 Google Docs，然后下载为本地 Markdown 文件（假设命名为 `notebook_blindspots.md`）。
+2. **结构化清洗：** 使用一个简单的 Python 本地脚本，将非结构化的文本转化为符合大模型上下文格式的结构化 YAML/Markdown：
+
+```python
+# clean_assets.py
+import re
+
+def format_blindspots(input_file, output_file):
+    with open(input_file, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # 提取核心矛盾点与盲点，转化为大模型易读的规约格式
+    formatted_text = f"## 业务盲点与架构对抗规约\n\n> 注意：以下为 NotebookLM 审计出的业务盲点与逻辑矛盾，开发时必须严格绕开：\n\n{content}"
+    
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(formatted_text)
+
+format_blindspots("notebook_blindspots.md", "system_rules.md")
+
+```
+
+### 2. 注入 Continue 上下文
+
+Continue 支持通过 `.continuerc.json` 或 `config.json` 配置 `systemMessage`，也可以利用其自定义的 `ContextProviders` 动态读取文件。
+
+**方案 A：动态 System Prompt 注入**
+修改项目根目录下的 `.continue/config.json`，将清洗后的 `system_rules.md` 作为系统级约束常驻：
+
+```json
+{
+  "models": [ ... ],
+  "systemMessage": "你是一个严谨的资深开发导师。在编写和审计代码时，必须严格遵守项目根目录下 'system_rules.md' 中定义的业务盲点规约，防止引入相同的逻辑漏洞。"
+}
+
+```
+
+**方案 B：利用 Continue 的 `@file` 机制（推荐）**
+无需频繁修改配置文件，直接在 Continue 的聊天输入框中使用 **`@system_rules.md`**。这样可以将 NotebookLM 的盲点资产作为上下文切片，直接喂给当前对话。
+
+---
+
+## 二、 上下文裁剪：基于 AST 的类/函数级精简
+
+直接将整个大文件或无关的相邻依赖塞给 Continue 会导致 Token 爆炸并引入噪声。利用 AST（抽象语法树）进行精确裁剪，可以做到“只提供声明、调用链和目标函数实体”。
+
+### 1. 技术选型：Tree-sitter / Python `ast` 库
+
+以 Python 项目为例，利用内置的 `ast` 库（如果是 TypeScript/Go，推荐使用 `tree-sitter` CLI），编写一个上下文剪裁脚本 `ast_clipper.py`。
+
+### 2. 裁剪脚本的核心实现逻辑
+
+该脚本的作用是：输入一个源码文件，**保留类结构、函数签名、Docstring，但剔除其他无关函数的具体实现体**，只完整保留你当前正在修改的那个函数的函数体。
+
+```python
+import ast
+
+class ASTTransformer(ast.NodeTransformer):
+    def __init__(self, target_function_name):
+        self.target_function = target_function_name
+
+    def visit_FunctionDef(self, node):
+        # 如果是目标修改函数，保留完整体
+        if node.name == self.target_function:
+            return node
+        
+        # 如果是其他函数，只保留签名和文档注释，清空内部具体实现
+        docstring = ast.get_docstring(node)
+        if docstring:
+            node.body = [ast.Expr(value=ast.Constant(value=docstring))]
+        else:
+            node.body = [ast.Pass()]  # 用 pass 替代具体实现
+        return node
+
+def clip_file_context(file_path, target_func):
+    with open(file_path, "r", encoding="utf-8") as f:
+        source = f.read()
+    
+    tree = ast.parse(source)
+    transformer = ASTTransformer(target_func)
+    modified_tree = transformer.visit(tree)
+    ast.fix_missing_locations(modified_tree)
+    
+    return ast.unparse(modified_tree)
+
+# 示例：只保留 my_service.py 中 process_data 的具体代码，其余函数只留骨架
+clipped_code = clip_file_context("my_service.py", "process_data")
+print(clipped_code)
+
+```
+
+### 3. 与 OpenCode → Continue 链条集成
+
+1. **OpenCode 摘录阶段：** 当 OpenCode 在上游分析出需要修改 `my_service.py` 中的 `process_data` 函数时，触发该 Python 裁剪脚本。
+2. **生成临时快照：** 脚本输出一份裁剪后的精简上下文，保存为 `.context_cache/my_service_clipped.py`。这份文件的 Token 消耗通常只有原文件的 $10\% \sim 20\%$。
+3. **Continue 承接：** 在 IDE 中，通过 Continue 键入：
+> `@my_service_clipped.py 请基于此骨架和被保留的 process_data 函数，重构其内部的并发逻辑。`
+
+
+
+通过这种方式，Continue 既获得了完整的全局类/函数依赖关系（不会报未定义错误），又免受几千行不相关业务代码的 Token 干扰，精炼度大幅提升。
 
 ## 总结
 
