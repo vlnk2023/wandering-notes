@@ -45,3 +45,15 @@ https://www.stcn.com/  这个网站内有可能搜索到顶级投资的底层逻
 
 
 https://www.innoxsz.com/    XBOT PARK基金，李泽湘个人平台资源的包装
+
+https://ssl.dg.gov.cn/kcj/cygs/index.html 深圳创业故事
+
+https://www.geekpark.net/column/308  很好的创业者深度对话
+
+https://m.mp.oeeee.com/special/3872_cfd8e2fa5465be74c18a0b07cdcd6029.html?apptarget=blank   “湾心向世界”大咖访谈系列，邀请港澳地区政界、商界等名人围绕粤港澳合作、融合发展以及南沙作为面向世界的重要门户，如何协同港澳进一步发挥作用等议题展开多角度的采访，呈现粤港澳大湾区的建成成果。
+
+https://tech.ifeng.com/shanklist/5-35054-/   科技创新故事，深度分析和挖掘的文章会有一些
+
+https://www.jiemian.com/account/675.html  企业家的故事
+
+https://www.wired.com/author/zeyi-yang/  专注跟踪中国科技企业家的故事
