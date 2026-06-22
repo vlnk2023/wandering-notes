@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="搜集常用智能搜索引擎（Perplexity、Grok、Brave Search 等）及命令行接入方案，为知识库构建提供基础设施参考。">
-<title>常用智能搜索引擎搜集 · Wandering Notes</title>
+<meta name="description" content="远端有新的改动，不能直接硬推覆盖">
+<title>如何修复github错位问题 · Wandering Notes</title>
 <style>
 
 :root {
@@ -597,30 +597,182 @@ mark {
     <a href="/cognitive-map">认知地图</a>
   </nav>
 </header>
-<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a><a class="post-action secondary" href="/edit?path=data%2Fposts%2F2026-05-05-changyongsousuoyinqing.md&amp;slug=2026-05-05-changyongsousuoyinqing">编辑本文</a></div></nav><div class="post-hero"><h1>常用智能搜索引擎搜集</h1><time class="date" datetime="2026-05-05">2026-05-05</time><div class="tags"><a class="tag" href="/posts?tag=%E8%B5%84%E6%BA%90">#资源</a><a class="tag" href="/posts?tag=%E6%90%9C%E7%B4%A2">#搜索</a><a class="tag" href="/posts?tag=AI">#AI</a></div></div><article class="article"><h2>常用智能搜索引擎</h2>
-<p>搜集如下：</p>
-<p>https://x.com/i/grok</p>
-<p>https://andisearch.com/</p>
-<p>https://felo.ai/search</p>
-<p>https://www.perplexity.ai/</p>
-<p>https://search.brave.com/</p>
-<p>https://iask.ai/</p>
-<p>https://www.n.cn/</p>
-<p>https://ya.ru/alice/chat/   全都是俄语高质量信息来源</p>
-<p>https://www.quark.cn/  搜索插件</p>
-<p>https://readhub.cn/topic/8spii1YywVs 这个页面内容的话题追踪是怎么样的技术实现方案</p>
-<p>https://shadowlibraries.github.io/DirectDownloads/AnnasArchive/  影子图书馆，下载电子书</p>
-<p>后续考虑如何利用这些引擎命令行接入bash脚本，自动解析或者接入tg内自动推送使用，作为知识库构建的系统基础框架。</p>
-<p>https://blog.sandtears.com/
-这个网站我想模仿实现，简洁大方，核心模块都是我想要的。而且内容质量也很高</p>
-<p>https://www.stcn.com/  这个网站内有可能搜索到顶级投资的底层逻辑链条。比如，证券时报报道把他的模式概括为“导师+学生”的天使投资，称其出资鼓励学生创业，并在2014年前后设立清水湾创投、XBOT PARK基金，投资阶段以种子轮、天使轮、A轮为主。李泽湘与红杉系也确有深度关系：红杉/腾讯等曾作为LP参与其相关基金；2016年，李泽湘还与沈南鹏、陈冠华等共同发起香港X科技创业平台。</p>
-<p>https://www.innoxsz.com/    XBOT PARK基金，李泽湘个人平台资源的包装</p>
-<p>https://ssl.dg.gov.cn/kcj/cygs/index.html 深圳创业故事</p>
-<p>https://www.geekpark.net/column/308  很好的创业者深度对话</p>
-<p>https://m.mp.oeeee.com/special/3872_cfd8e2fa5465be74c18a0b07cdcd6029.html?apptarget=blank   “湾心向世界”大咖访谈系列，邀请港澳地区政界、商界等名人围绕粤港澳合作、融合发展以及南沙作为面向世界的重要门户，如何协同港澳进一步发挥作用等议题展开多角度的采访，呈现粤港澳大湾区的建成成果。</p>
-<p>https://tech.ifeng.com/shanklist/5-35054-/   科技创新故事，深度分析和挖掘的文章会有一些</p>
-<p>https://www.jiemian.com/account/675.html  企业家的故事</p>
-<p>https://www.wired.com/author/zeyi-yang/  专注跟踪中国科技企业家的故事</p>
+<main class="post-wrap"><nav class="post-actions" aria-label="文章导航"><div class="post-action-group"><button class="post-action" type="button" onclick="if (history.length > 1) { history.back(); } else { location.href = '/posts'; }">← 返回上一页</button><a class="post-action secondary" href="/posts">返回首页</a><a class="post-action secondary" href="/edit?path=data%2Fposts%2F2026-06-22-how-to-use-github1.md&amp;slug=2026-06-22-how-to-use-github1">编辑本文</a></div></nav><div class="post-hero"><h1>如何修复github错位问题</h1><time class="date" datetime="2026-06-22">2026-06-22</time><div class="tags"><a class="tag" href="/posts?tag=%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0">#技术笔记</a></div></div><article class="article"><h2>正文</h2>
+<p>核心思路其实很简单: 先判断“本地比远端少了什么、又多了什么”，再把两边安全合并，最后再推。你这次属于最常见的一类: <code>push</code> 失败不是因为你写坏了，而是因为别人或别的机器先往远端 <code>main</code> 推了新提交。</p>
+<p><strong>我怎么快速定位</strong></p>
+<ol>
+<li>看当前分支和领先/落后状态</li>
+</ol>
+<pre><code class="language-powershell">git status --short --branch
+</code></pre>
+<p>你这次看到的关键信息相当于:</p>
+<pre><code class="language-powershell">## main...origin/main [ahead 1]
+</code></pre>
+<p>这说明本地 <code>main</code> 比你“本地记忆里的远端”多 1 个提交，也就是你刚写的文章已经提交成功了。</p>
+<ol start="2">
+<li>但报错里又说远端比你新，所以我立刻想到: 本地的 <code>origin/main</code> 很可能过期了<br />
+所以我执行:</li>
+</ol>
+<pre><code class="language-powershell">git fetch origin
+</code></pre>
+<p>这个命令不会改你的文件，只会更新“远端最新状态”的记录。<br />
+更新后再看:</p>
+<pre><code class="language-powershell">git status --short --branch
+</code></pre>
+<p>这次就变成了类似:</p>
+<pre><code class="language-powershell">## main...origin/main [ahead 1, behind 2]
+</code></pre>
+<p>这一下就定位准了:</p>
+<ul>
+<li><code>ahead 1</code> = 你本地有 1 个自己的新提交</li>
+<li><code>behind 2</code> = 远端有 2 个你本地还没有的新提交</li>
+</ul>
+<p>也就是说，问题不是“提交失败”，而是“远端先走了两步，你不能直接硬推覆盖”。</p>
+<p><strong>我怎么确认能不能安全修</strong>
+接着我会看“双方改的是不是同一个文件”。<br />
+如果改的是不同文件，通常可以直接 <code>rebase</code>，很稳。</p>
+<p>看本地独有改动:</p>
+<pre><code class="language-powershell">git diff --name-only origin/main..HEAD
+</code></pre>
+<p>看远端独有改动:</p>
+<pre><code class="language-powershell">git diff --name-only HEAD..origin/main
+</code></pre>
+<p>你这次实际情况是:</p>
+<ul>
+<li>你的提交改的是: <code>data/posts/2026-06-22-xindebiji.md</code></li>
+<li>远端 2 个提交改的是: <code>data/posts/2026-05-05-changyongsousuoyinqing.md</code></li>
+</ul>
+<p>文件不重叠，所以基本可以判断: 冲突风险很低，可以直接把你的提交“搬到”远端最新提交后面。</p>
+<p><strong>我怎么精准修复</strong>
+我用的是这条最稳妥的命令:</p>
+<pre><code class="language-powershell">git pull --rebase origin main
+</code></pre>
+<p>它的意思不是“乱合并”，而是:</p>
+<ul>
+<li>先拿到远端最新 <code>main</code></li>
+<li>临时拿下你本地那 1 个提交</li>
+<li>把远端 2 个新提交放进来</li>
+<li>再把你的那 1 个提交重新贴到最上面</li>
+</ul>
+<p>这样历史会很干净，不会平白多出一个 merge commit。</p>
+<p>成功后再推:</p>
+<pre><code class="language-powershell">git push origin main
+</code></pre>
+<p>这次就成功了。</p>
+<hr />
+<p><strong>你以后自己操作，照这个流程就行</strong>
+假设你又遇到这种报错:</p>
+<pre><code class="language-powershell">! [rejected] main -&gt; main (fetch first)
+error: failed to push some refs
+</code></pre>
+<p>按下面做。</p>
+<p><strong>第一步：先看本地状态</strong></p>
+<pre><code class="language-powershell">git status --short --branch
+</code></pre>
+<p>如果你只是刚提交完，通常会看到类似:</p>
+<pre><code class="language-powershell">## main...origin/main [ahead 1]
+</code></pre>
+<p><strong>第二步：刷新远端状态</strong></p>
+<pre><code class="language-powershell">git fetch origin
+</code></pre>
+<p>然后再看一次:</p>
+<pre><code class="language-powershell">git status --short --branch
+</code></pre>
+<p>如果看到:</p>
+<pre><code class="language-powershell">## main...origin/main [ahead 1, behind 2]
+</code></pre>
+<p>就说明:</p>
+<ul>
+<li>你本地有新提交</li>
+<li>远端也有新提交</li>
+<li>需要先同步再推</li>
+</ul>
+<p><strong>第三步：先用 rebase 同步</strong></p>
+<pre><code class="language-powershell">git pull --rebase origin main
+</code></pre>
+<p><strong>第四步：再推送</strong></p>
+<pre><code class="language-powershell">git push origin main
+</code></pre>
+<p>大多数情况下，到这里就结束了。</p>
+<hr />
+<p><strong>如果 <code>rebase</code> 时出现冲突怎么办</strong>
+别慌，这也很常见。</p>
+<p>Git 会提示哪些文件冲突了。你先看状态:</p>
+<pre><code class="language-powershell">git status
+</code></pre>
+<p>然后手动打开冲突文件，会看到这种标记:</p>
+<pre><code class="language-text">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+远端版本
+=======
+你的版本
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 你的提交
+</code></pre>
+<p>你需要把它改成你真正想保留的内容，删掉这些标记。<br />
+改完后执行:</p>
+<pre><code class="language-powershell">git add 冲突文件路径
+git rebase --continue
+</code></pre>
+<p>如果还有冲突，就继续重复:</p>
+<ul>
+<li>改文件</li>
+<li><code>git add</code></li>
+<li><code>git rebase --continue</code></li>
+</ul>
+<p>如果你觉得完全搞乱了，想退回这次 rebase:</p>
+<pre><code class="language-powershell">git rebase --abort
+</code></pre>
+<p>这会回到 rebase 之前的状态，很安全。</p>
+<hr />
+<p><strong>给小白的判断口诀</strong>
+以后看到 <code>push rejected</code>，先不要慌，也不要第一反应 <code>force push</code>。</p>
+<p>你先问自己 3 件事:</p>
+<ol>
+<li>我本地提交成功了吗？</li>
+</ol>
+<pre><code class="language-powershell">git log --oneline -5
+</code></pre>
+<ol start="2">
+<li>远端是不是更新了？</li>
+</ol>
+<pre><code class="language-powershell">git fetch origin
+git status --short --branch
+</code></pre>
+<ol start="3">
+<li>我们改的是不是同一个文件？</li>
+</ol>
+<pre><code class="language-powershell">git diff --name-only origin/main..HEAD
+git diff --name-only HEAD..origin/main
+</code></pre>
+<p>如果不是同一个文件，通常直接:</p>
+<pre><code class="language-powershell">git pull --rebase origin main
+git push origin main
+</code></pre>
+<hr />
+<p><strong>最推荐你记住的最小命令集</strong>
+你可以先只背这 4 条，已经能解决 80% 的问题:</p>
+<pre><code class="language-powershell">git status --short --branch
+git fetch origin
+git pull --rebase origin main
+git push origin main
+</code></pre>
+<p>它们分别是:</p>
+<ul>
+<li><code>status</code> = 看现在本地和远端谁领先</li>
+<li><code>fetch</code> = 刷新远端最新信息</li>
+<li><code>pull --rebase</code> = 把你的提交接到远端最新后面</li>
+<li><code>push</code> = 推上去</li>
+</ul>
+<hr />
+<p><strong>一个最稳的新手流程</strong>
+以后你发文章时，可以固定这么做:</p>
+<pre><code class="language-powershell">git add .
+git commit -m &quot;你的提交说明&quot;
+git fetch origin
+git pull --rebase origin main
+git push origin main
+</code></pre>
+<p>这样比“直接 commit 后立刻 push”更稳，因为你先同步了远端。</p>
+<p>如果你愿意，我下一条可以直接给你一份“博客发布时的 Git 防踩坑清单”，你以后照抄命令就能独立操作。</p>
 </article></main>
 </body>
 </html>
