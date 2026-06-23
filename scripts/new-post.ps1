@@ -24,77 +24,76 @@ function Abort-Rebase {
   }
 }
 
-function Has-WorkingTreeChanges {
-  $status = git status --porcelain
-  return -not [string]::IsNullOrWhiteSpace(($status | Out-String))
+function Invoke-GitCommand {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string[]]$Arguments,
+    [switch]$PrintOutput,
+    [hashtable]$EnvironmentOverrides
+  )
+
+  $previousErrorActionPreference = $ErrorActionPreference
+  $previousEnv = @{}
+
+  try {
+    if ($EnvironmentOverrides) {
+      foreach ($key in $EnvironmentOverrides.Keys) {
+        $previousEnv[$key] = [Environment]::GetEnvironmentVariable($key)
+        [Environment]::SetEnvironmentVariable($key, $EnvironmentOverrides[$key])
+      }
+    }
+
+    # Windows PowerShell 5.1 can turn native stderr into a terminating error
+    # when ErrorActionPreference is Stop. Capture it without changing arguments.
+    $ErrorActionPreference = "Continue"
+    $output = & git @Arguments 2>&1
+    $exitCode = $LASTEXITCODE
+    $combined = (($output | ForEach-Object { $_.ToString() }) | Out-String).Trim()
+
+    if ($PrintOutput -and $combined) {
+      Write-Host $combined
+    }
+
+    return @{
+      Success = ($exitCode -eq 0)
+      ExitCode = $exitCode
+      Output = $combined
+    }
+  }
+  finally {
+    $ErrorActionPreference = $previousErrorActionPreference
+    if ($EnvironmentOverrides) {
+      foreach ($key in $EnvironmentOverrides.Keys) {
+        [Environment]::SetEnvironmentVariable($key, $previousEnv[$key])
+      }
+    }
+
+  }
 }
 
 function Invoke-GitPull {
-  $env:GIT_EDITOR = "true"
-  $output = & git pull --rebase 2>&1
-  $code = $LASTEXITCODE
-  $env:GIT_EDITOR = $null
-  return @{
-    Success = ($code -eq 0)
-    ExitCode = $code
-    Output = ($output | Out-String).Trim()
-  }
-}
-
-function Invoke-PullWithAutoStash {
-  $stashed = $false
-  if (Has-WorkingTreeChanges) {
-    Write-Host "  [INFO] Local changes detected. Stashing before pull..."
-    $stashOutput = & git stash push -u -m "auto-stash before initial pull" 2>&1
-    $stashed = $LASTEXITCODE -eq 0
-    if (-not $stashed) {
-      return @{
-        Success = $false
-        Output = ($stashOutput | Out-String).Trim()
-        Stashed = $false
-      }
-    }
-  }
-
-  $pullResult = Invoke-GitPull
-
-  if ($stashed) {
-    Write-Host "  [INFO] Restoring stashed changes..."
-    $stashPopOutput = & git stash pop 2>&1
-    if ($LASTEXITCODE -ne 0) {
-      Write-Host "  [WARN] Stash pop has conflicts."
-      if ($stashPopOutput) {
-        Write-Host ($stashPopOutput | Out-String).Trim()
-      }
-    }
-  }
-
-  return @{
-    Success = $pullResult.Success
-    Output = $pullResult.Output
-    Stashed = $stashed
-  }
+  return Invoke-GitCommand -Arguments @("pull", "--rebase", "--autostash") -EnvironmentOverrides @{ GIT_EDITOR = "true" }
 }
 
 function Test-PushRejected {
-  # rejected = remote has new commits (exit code non-zero + stderr contains specific hints)
-  $output = git push 2>&1
-  $exitCode = $LASTEXITCODE
-  if ($exitCode -eq 0) { return @{ Success = $true; Rejected = $false } }
+  $pushResult = Invoke-GitCommand -Arguments @("push") -PrintOutput
+  if ($pushResult.Success) {
+    return @{ Success = $true; Rejected = $false; Output = $pushResult.Output }
+  }
 
-  $stderr = ($output | Out-String).ToLower()
-  $isRejected = $stderr -match "rejected|fetch first|updates were rejected"
-  return @{ Success = $false; Rejected = $isRejected }
+  $lowerOutput = $pushResult.Output.ToLower()
+  $isRejected = $lowerOutput -match "rejected|fetch first|updates were rejected"
+  return @{ Success = $false; Rejected = $isRejected; Output = $pushResult.Output; ExitCode = $pushResult.ExitCode }
 }
 
 # --- Step 1: Pull ---
 Write-Host "[1/4] Pulling latest from GitHub..."
-$pullResult = Invoke-PullWithAutoStash
+$pullResult = Invoke-GitPull
 if (-not $pullResult.Success) {
   if (Is-InRebase) {
     Write-Host "  [WARN] Pull failed during an in-progress rebase. Aborting and retrying once..."
     Abort-Rebase
-    $pullResult = Invoke-PullWithAutoStash
+    $pullResult = Invoke-GitPull
   }
 
   if (-not $pullResult.Success) {
@@ -153,8 +152,10 @@ for ($i = 1; $i -le $maxRetries; $i++) {
   }
 
   if (-not $result.Rejected) {
-    # Not a rejection (network error, permission denied, etc.) - no point retrying
     Write-Host "[ERROR] Push failed (not a rejection). Check network and permissions."
+    if ($result.Output) {
+      Write-Host $result.Output
+    }
     Write-Host "  Run 'git push' manually to see the full error."
     exit 1
   }
@@ -163,15 +164,6 @@ for ($i = 1; $i -le $maxRetries; $i++) {
 
   Write-Host "[WARN] Push rejected (remote has new commits). Retry $i/$maxRetries..."
 
-  # Save uncommitted changes if any
-  $stashed = $false
-  $porcelain = git status --porcelain
-  if ($porcelain) {
-    git stash push -m "auto-stash before pull-retry"
-    $stashed = $LASTEXITCODE -eq 0
-  }
-
-  # Pull with rebase
   $pullResult = Invoke-GitPull
   if (-not $pullResult.Success) {
     Write-Host "[ERROR] Rebase failed during retry."
@@ -179,25 +171,7 @@ for ($i = 1; $i -le $maxRetries; $i++) {
       Write-Host $pullResult.Output
     }
     Abort-Rebase
-    if ($stashed) {
-      Write-Host "  Attempting to restore stashed changes..."
-      try { git stash pop } catch { }
-      if ($LASTEXITCODE -ne 0) {
-        Write-Host "[ERROR] Stash pop also failed. Your changes are in stash."
-        Write-Host "  Run 'git stash list' then 'git stash pop' after resolving."
-      }
-    }
     exit 1
-  }
-
-  # Restore stashed changes
-  if ($stashed) {
-    try { git stash pop } catch { }
-    if ($LASTEXITCODE -ne 0) {
-      Write-Host "[WARN] Stash pop has conflicts. Your commit is still local."
-      Write-Host "  Conflicts are in working tree. Resolve them, then run 'git push'."
-      Write-Host "  Stash entry preserved: run 'git stash list' to check."
-    }
   }
 }
 
