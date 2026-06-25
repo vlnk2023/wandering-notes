@@ -34,3 +34,4 @@ https://ip.net.coffee/claude/
 备用：[https://web3.rstar.cloud](https://web3.rstar.cloud/)
 
  
+https://github.com/2dust/v2rayN/releases  下载安装包 v2rayN-windows-86,
