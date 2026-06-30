@@ -59,3 +59,5 @@ https://www.jiemian.com/account/675.html  企业家的故事
 https://www.wired.com/author/zeyi-yang/  专注跟踪中国科技企业家的故事
 
 https://i.cgeinc.com/  商业情报信息挖掘分析
+
+https://www.sem.tsinghua.edu.cn/qhglpl/alfx.htm  清华经管学院的案例分析
