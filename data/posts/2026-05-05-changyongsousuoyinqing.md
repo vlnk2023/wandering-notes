@@ -61,3 +61,5 @@ https://www.wired.com/author/zeyi-yang/  专注跟踪中国科技企业家的故
 https://i.cgeinc.com/  商业情报信息挖掘分析
 
 https://www.sem.tsinghua.edu.cn/qhglpl/alfx.htm  清华经管学院的案例分析
+
+https://www.digitaljournal.com/ 很不错的新闻技术文章，比较有新意和深度
