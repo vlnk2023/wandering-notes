@@ -10,6 +10,10 @@ tags:
 summary: 常用新闻信源与工具搜集整理，包括 Telegram 频道、新闻网站及营销案例研究资源。
 ---
 
+## 一些高质量专业网站和论坛
+https://github.com/net4people/bbs/issues  节点代理技术问题专业研究和讨论
+
+
 ## 最好用的全世界tg频道搜索
 
 https://semagram.io 
