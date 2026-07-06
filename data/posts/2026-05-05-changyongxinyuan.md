@@ -19,6 +19,10 @@ https://semagram.io
 您可以通过在查询中添加min_users：N和/或max_users：N（例如min_users：1000、maX_users：50000)按订阅者/会员数量筛选。
 你可以输入@username（不加额外文字，但用@开头）来搜索相似的项目。
 
+
+https://github.com/ruanyf/weekly/issues
+非常不错的技术新闻来源 
+
 ## 常用新闻信源搜集
 
 
