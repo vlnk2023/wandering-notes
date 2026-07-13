@@ -307,3 +307,6 @@ Fingerprint: chrome
 |SNI|`proxy2.phyu.de5.net`|
 |Fingerprint|`chrome`|
 
+考虑可否部署一个自己的免费翻译平台
+
+https://platform.minimaxi.com/subscribe/token-plan   11月份到期续订
